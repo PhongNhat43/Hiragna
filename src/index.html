@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hiragana Quiz</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="quiztype-screen" class="quiz-container" style="display: flex;">
+    <h2>Select Quiz Type</h2>
+    <div id="quiztype-buttons">
+      <button class="quiztype-btn" data-quiztype="hiragana">Hiragana</button>
+      <button class="quiztype-btn" data-quiztype="katakana">Katakana</button>
+    </div>
+  </div>
+  <div id="difficulty-screen" class="quiz-container" style="display: none;">
+    <h2>Select Difficulty</h2>
+    <div id="difficulty-buttons">
+      <button class="difficulty-btn" data-difficulty="easy">Easy</button>
+      <button class="difficulty-btn" data-difficulty="medium">Medium</button>
+      <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+    </div>
+  </div>
+  <div class="quiz-container" id="main-quiz" style="display: none;">
+    <div id="progress-bar-container">
+      <div id="progress-bar"></div>
+      <span id="question-counter"></span>
+    </div>
+    <div id="question-area">
+      <span id="hiragana-char"></span>
+    </div>
+    <div id="options-area">
+      <!-- Answer buttons will be rendered here -->
+    </div>
+    <div class="info-bar">
+      <span id="score">Score: 0</span>
+    </div>
+    <div class="button-row">
+      <button id="skip-btn">Skip</button>
+      <button id="restart-btn">Restart</button>
+      <button id="next-btn" style="display:none;">Next</button>
+      <button id="review-btn" style="display:none;">Review Mistakes</button>
+    </div>
+    <div id="review-area" style="display:none;"></div>
+  </div>
+  <script src="hiraganaData.js"></script>
+  <script src="quiz.js"></script>
+</body>
+</html>
