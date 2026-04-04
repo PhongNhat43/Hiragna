@@ -18,8 +18,18 @@ const quizState = {
   quizComplete: false,
   incorrectAnswers: [],
   reviewIndex: 0,
+  questionHistory: [],
   quizType: null, // 'hiragana' or 'katakana'
-  questionSet: null // set to QUIZ_TYPE_CONFIG[quizType].data
+  questionSet: null, // set to QUIZ_TYPE_CONFIG[quizType].data
+  autoAdvance: true,
+  feedbackDelay: 800,
+  reviewEnabled: true,
+  selectedGroup: 'all',
+  mode: null,
+  fcIndex: 0,
+  fcKnew: 0,
+  fcNeedReview: 0,
+  fcAnswerShown: false
 };
 
 // Import QUIZ_TYPE_CONFIG from hiraganaData.js
@@ -40,9 +50,10 @@ function generateQuestion() {
   const dataSet = quizState.questionSet;
   const correctIdx = getRandomInt(dataSet.length);
   const correct = dataSet[correctIdx];
+  const optionsPool = dataSet.length >= 4 ? dataSet : QUIZ_TYPE_CONFIG[quizState.quizType].data;
   let options = [correct.romaji];
   while (options.length < 4) {
-    const rand = dataSet[getRandomInt(dataSet.length)].romaji;
+    const rand = optionsPool[getRandomInt(optionsPool.length)].romaji;
     if (!options.includes(rand)) options.push(rand);
   }
   shuffle(options);
@@ -68,11 +79,21 @@ function validateAnswer(selectedRomaji) {
 
 document.addEventListener('DOMContentLoaded', () => {
   // UI rendering and event listeners
+  const modeSelectionScreen = document.getElementById('mode-selection-screen');
+  const modeBtns = document.querySelectorAll('.mode-btn');
   const quizTypeScreen = document.getElementById('quiztype-screen');
   const quizTypeBtns = document.querySelectorAll('.quiztype-btn');
   const difficultyScreen = document.getElementById('difficulty-screen');
   const mainQuiz = document.getElementById('main-quiz');
   const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+  const flashcardScreen = document.getElementById('flashcard-screen');
+  const fcProgress = document.getElementById('fc-progress');
+  const fcCharacter = document.getElementById('fc-character');
+  const fcAnswer = document.getElementById('fc-answer');
+  const fcShowBtn = document.getElementById('fc-show-btn');
+  const fcKnewBtn = document.getElementById('fc-knew-btn');
+  const fcReviewBtn = document.getElementById('fc-review-btn');
+  const fcRestartBtn = document.getElementById('fc-restart-btn');
 
   const hiraganaChar = document.getElementById('hiragana-char');
   const optionsArea = document.getElementById('options-area');
@@ -84,17 +105,156 @@ document.addEventListener('DOMContentLoaded', () => {
   const reviewArea = document.getElementById('review-area');
   const progressBar = document.getElementById('progress-bar');
   const questionCounter = document.getElementById('question-counter');
+  const settingsScreen = document.getElementById('settings-screen');
+  const settingBtns = document.querySelectorAll('.setting-btn');
+  const startQuizBtn = document.getElementById('start-quiz-btn');
+  const backToGroupBtn = document.getElementById('back-to-group-btn');
+  const groupFilterScreen = document.getElementById('group-filter-screen');
+  const groupButtonsContainer = document.getElementById('group-buttons');
+  const confirmGroupBtn = document.getElementById('confirm-group-btn');
+  const backToDifficultyBtn = document.getElementById('back-to-difficulty-btn');
+  const reviewAllBtn = document.getElementById('review-all-btn');
+  const backFromQuiztypeBtn = document.getElementById('back-from-quiztype-btn');
+  const backFromDifficultyBtn = document.getElementById('back-from-difficulty-btn');
+  const weakReviewBtn = document.getElementById('weak-review-btn');
+  const progressScreen = document.getElementById('progress-screen');
+  const progressContent = document.getElementById('progress-content');
+  const viewProgressBtn = document.getElementById('view-progress-btn');
+  const resetProgressBtn = document.getElementById('reset-progress-btn');
+  const resetWeakItemsBtn = document.getElementById('reset-weak-items-btn');
+  const backFromProgressBtn = document.getElementById('back-from-progress-btn');
+
+  // Progress tracking
+  function saveQuizProgress() {
+    const progress = loadProgress();
+    const correct = quizState.score;
+    const wrong = quizState.totalQuestions - quizState.score;
+    const type = quizState.quizType;
+
+    progress.overall.totalQuizzes++;
+    progress.overall.totalQuestions += quizState.totalQuestions;
+    progress.overall.correctAnswers += correct;
+    progress.overall.wrongAnswers += wrong;
+
+    progress.byType[type].totalQuizzes++;
+    progress.byType[type].totalQuestions += quizState.totalQuestions;
+    progress.byType[type].correctAnswers += correct;
+    progress.byType[type].wrongAnswers += wrong;
+
+    saveProgress(progress);
+  }
+
+  function renderAccuracy(correct, total) {
+    if (total === 0) return 'N/A';
+    return (correct / total * 100).toFixed(1) + '%';
+  }
+
+  function showProgressScreen() {
+    const p = loadProgress();
+    const o = p.overall;
+    const w = loadWeakItems();
+    const types = [
+      { key: 'hiragana', label: 'Hiragana' },
+      { key: 'katakana', label: 'Katakana' },
+      { key: 'kanji',    label: 'Kanji' }
+    ];
+
+    const typeRows = types.map(t => {
+      const d = p.byType[t.key];
+      return `<tr>
+        <td>${t.label}</td>
+        <td>${d.totalQuizzes}</td>
+        <td>${d.correctAnswers}</td>
+        <td>${d.wrongAnswers}</td>
+        <td>${renderAccuracy(d.correctAnswers, d.totalQuestions)}</td>
+        <td>${w[t.key].length}</td>
+      </tr>`;
+    }).join('');
+
+    progressContent.innerHTML = `
+      <div class="progress-section">
+        <h3>Tổng Quan</h3>
+        <table class="progress-table">
+          <tr><th>Số Quiz</th><th>Câu hỏi</th><th>Đúng</th><th>Sai</th><th>Chính xác</th></tr>
+          <tr>
+            <td>${o.totalQuizzes}</td>
+            <td>${o.totalQuestions}</td>
+            <td>${o.correctAnswers}</td>
+            <td>${o.wrongAnswers}</td>
+            <td>${renderAccuracy(o.correctAnswers, o.totalQuestions)}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="progress-section">
+        <h3>Theo Loại</h3>
+        <table class="progress-table">
+          <tr><th>Loại</th><th>Số Quiz</th><th>Đúng</th><th>Sai</th><th>Chính xác</th><th>Điểm yếu</th></tr>
+          ${typeRows}
+        </table>
+      </div>
+    `;
+
+    modeSelectionScreen.style.display = 'none';
+    progressScreen.style.display = 'flex';
+    saveSession({ screen: 'progress-screen' });
+  }
+
+  // Mode selection logic
+  modeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      quizState.mode = btn.getAttribute('data-mode');
+      modeSelectionScreen.style.display = 'none';
+      quizTypeScreen.style.display = 'flex';
+      saveSession({ screen: 'quiztype-screen', mode: quizState.mode });
+    });
+  });
+
+  weakReviewBtn.addEventListener('click', () => {
+    quizState.mode = 'weak-review';
+    modeSelectionScreen.style.display = 'none';
+    quizTypeScreen.style.display = 'flex';
+    saveSession({ screen: 'quiztype-screen', mode: 'weak-review' });
+  });
+
+  backFromQuiztypeBtn.addEventListener('click', () => {
+    quizTypeScreen.style.display = 'none';
+    quizState.mode = null;
+    modeSelectionScreen.style.display = 'flex';
+    clearSession();
+  });
+
+  backFromDifficultyBtn.addEventListener('click', () => {
+    difficultyScreen.style.display = 'none';
+    quizState.quizType = null;
+    quizState.questionSet = null;
+    quizTypeScreen.style.display = 'flex';
+    saveSession({ screen: 'quiztype-screen', mode: quizState.mode });
+  });
 
   // Quiz type selection logic
-  console.log('Quiz type buttons found:', quizTypeBtns.length);
   quizTypeBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const type = btn.getAttribute('data-quiztype');
-      console.log('Quiz type button clicked:', type);
       quizState.quizType = type;
       quizState.questionSet = QUIZ_TYPE_CONFIG[type].data;
-      quizTypeScreen.style.display = 'none';
-      difficultyScreen.style.display = 'flex';
+      if (quizState.mode === 'weak-review') {
+        const weakItems = loadWeakItems();
+        if (weakItems[type].length === 0) {
+          alert('Không có mục yếu cho ' + QUIZ_TYPE_CONFIG[type].label + '. Hãy tiếp tục luyện tập!');
+          return;
+        }
+        quizTypeScreen.style.display = 'none';
+        startWeakReview();
+      } else if (quizState.mode === 'flashcard') {
+        quizTypeScreen.style.display = 'none';
+        renderGroupButtons();
+        groupFilterScreen.style.display = 'flex';
+        saveSession({ screen: 'group-filter-screen', mode: quizState.mode, quizType: type });
+      } else {
+        quizTypeScreen.style.display = 'none';
+        difficultyScreen.style.display = 'flex';
+        saveSession({ screen: 'difficulty-screen', mode: quizState.mode, quizType: type });
+      }
     });
   });
 
@@ -106,17 +266,161 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('Difficulty button clicked:', diff);
       quizState.difficulty = diff;
       quizState.totalQuestions = DIFFICULTY_CONFIG[diff].totalQuestions;
-      quizState.score = 0;
-      quizState.questionCount = 0;
-      quizState.quizComplete = false;
-      quizState.incorrectAnswers = [];
-      quizState.reviewIndex = 0;
       difficultyScreen.style.display = 'none';
-      mainQuiz.style.display = 'flex';
-      renderQuestion();
-      reviewBtn.style.display = 'none';
-      reviewArea.style.display = 'none';
+      renderGroupButtons();
+      groupFilterScreen.style.display = 'flex';
+      saveSession({ screen: 'group-filter-screen', mode: quizState.mode, quizType: quizState.quizType, difficulty: diff, totalQuestions: quizState.totalQuestions });
     });
+  });
+
+  // Group filter screen logic
+  function renderGroupButtons() {
+    const groups = GROUP_CONFIG[quizState.quizType];
+    groupButtonsContainer.innerHTML = '';
+    quizState.selectedGroup = Object.keys(groups)[0];
+    Object.entries(groups).forEach(([id, group], index) => {
+      const btn = document.createElement('button');
+      btn.className = 'group-btn' + (index === 0 ? ' active' : '');
+      btn.setAttribute('data-group', id);
+      btn.textContent = group.label;
+      btn.addEventListener('click', () => {
+        quizState.selectedGroup = id;
+        groupButtonsContainer.querySelectorAll('.group-btn')
+          .forEach(b => b.classList.toggle('active', b === btn));
+      });
+      groupButtonsContainer.appendChild(btn);
+    });
+  }
+
+  function applySettingsButtons() {
+    settingBtns.forEach(btn => {
+      const setting = btn.getAttribute('data-setting');
+      const rawValue = btn.getAttribute('data-value');
+      let value;
+      if (rawValue === 'true') value = true;
+      else if (rawValue === 'false') value = false;
+      else value = Number(rawValue);
+      btn.classList.toggle('active', quizState[setting] === value);
+    });
+  }
+
+  function restoreSession() {
+    try {
+      const session = loadSession();
+      if (!session || !session.screen) {
+        modeSelectionScreen.style.display = 'flex';
+        return;
+      }
+      switch (session.screen) {
+        case 'quiztype-screen':
+          quizState.mode = session.mode;
+          quizTypeScreen.style.display = 'flex';
+          break;
+        case 'difficulty-screen':
+          quizState.mode = session.mode;
+          quizState.quizType = session.quizType;
+          quizState.questionSet = QUIZ_TYPE_CONFIG[session.quizType].data;
+          difficultyScreen.style.display = 'flex';
+          break;
+        case 'group-filter-screen':
+          quizState.mode = session.mode;
+          quizState.quizType = session.quizType;
+          quizState.questionSet = QUIZ_TYPE_CONFIG[session.quizType].data;
+          if (session.difficulty) {
+            quizState.difficulty = session.difficulty;
+            quizState.totalQuestions = session.totalQuestions;
+          }
+          renderGroupButtons();
+          groupFilterScreen.style.display = 'flex';
+          break;
+        case 'settings-screen':
+          quizState.mode = session.mode;
+          quizState.quizType = session.quizType;
+          quizState.questionSet = QUIZ_TYPE_CONFIG[session.quizType].data;
+          quizState.difficulty = session.difficulty;
+          quizState.totalQuestions = session.totalQuestions;
+          quizState.selectedGroup = session.selectedGroup;
+          quizState.autoAdvance = session.autoAdvance;
+          quizState.feedbackDelay = session.feedbackDelay;
+          quizState.reviewEnabled = session.reviewEnabled;
+          renderGroupButtons();
+          applySettingsButtons();
+          settingsScreen.style.display = 'flex';
+          break;
+        case 'progress-screen':
+          showProgressScreen();
+          break;
+        default:
+          modeSelectionScreen.style.display = 'flex';
+      }
+    } catch (e) {
+      modeSelectionScreen.style.display = 'flex';
+    }
+  }
+
+  backToDifficultyBtn.addEventListener('click', () => {
+    groupFilterScreen.style.display = 'none';
+    if (quizState.mode === 'flashcard' || quizState.mode === 'weak-review') {
+      quizTypeScreen.style.display = 'flex';
+      saveSession({ screen: 'quiztype-screen', mode: quizState.mode });
+    } else {
+      difficultyScreen.style.display = 'flex';
+      saveSession({ screen: 'difficulty-screen', mode: quizState.mode, quizType: quizState.quizType });
+    }
+  });
+
+  backToGroupBtn.addEventListener('click', () => {
+    settingsScreen.style.display = 'none';
+    groupFilterScreen.style.display = 'flex';
+    saveSession({ screen: 'group-filter-screen', mode: quizState.mode, quizType: quizState.quizType, difficulty: quizState.difficulty, totalQuestions: quizState.totalQuestions });
+  });
+
+  confirmGroupBtn.addEventListener('click', () => {
+    groupFilterScreen.style.display = 'none';
+    if (quizState.mode === 'flashcard') {
+      startFlashcard();
+    } else {
+      settingsScreen.style.display = 'flex';
+      saveSession({ screen: 'settings-screen', mode: quizState.mode, quizType: quizState.quizType, difficulty: quizState.difficulty, totalQuestions: quizState.totalQuestions, selectedGroup: quizState.selectedGroup, autoAdvance: quizState.autoAdvance, feedbackDelay: quizState.feedbackDelay, reviewEnabled: quizState.reviewEnabled });
+    }
+  });
+
+  // Settings screen logic
+  settingBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const setting = btn.getAttribute('data-setting');
+      const rawValue = btn.getAttribute('data-value');
+      let value;
+      if (rawValue === 'true') value = true;
+      else if (rawValue === 'false') value = false;
+      else value = Number(rawValue);
+      quizState[setting] = value;
+      document.querySelectorAll(`.setting-btn[data-setting="${setting}"]`).forEach(b => {
+        b.classList.toggle('active', b === btn);
+      });
+    });
+  });
+
+  startQuizBtn.addEventListener('click', () => {
+    const group = GROUP_CONFIG[quizState.quizType][quizState.selectedGroup];
+    const fullData = QUIZ_TYPE_CONFIG[quizState.quizType].data;
+    quizState.questionSet = group.filter === null
+      ? fullData
+      : fullData.filter(item => group.filter.includes(item.romaji));
+    quizState.score = 0;
+    quizState.questionCount = 0;
+    quizState.isAnswered = false;
+    quizState.quizComplete = false;
+    quizState.incorrectAnswers = [];
+    quizState.reviewIndex = 0;
+    quizState.questionHistory = [];
+    settingsScreen.style.display = 'none';
+    mainQuiz.style.display = 'flex';
+    saveSession({ screen: 'mode-selection-screen' });
+    reviewBtn.style.display = 'none';
+    reviewAllBtn.style.display = 'none';
+    reviewArea.style.display = 'none';
+    renderQuestion();
   });
 
   function renderProgress() {
@@ -156,9 +460,16 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleAnswer(option, btn) {
     if (quizState.isAnswered) return;
     const correct = validateAnswer(option);
+    quizState.questionHistory.push({
+      kana: quizState.currentQuestion.kana,
+      correctRomaji: quizState.currentQuestion.correctRomaji,
+      userAnswer: option,
+      isCorrect: correct
+    });
     disableOptions();
     if (correct) {
       btn.style.background = '#bbf7d0';
+      removeFromWeakItem(quizState.quizType, quizState.currentQuestion.kana);
     } else {
       btn.style.background = '#fecaca';
       // Find and highlight the correct answer button
@@ -173,10 +484,14 @@ document.addEventListener('DOMContentLoaded', () => {
         correctRomaji: quizState.currentQuestion.correctRomaji,
         userAnswer: option
       });
+      addToWeakItem(quizState.quizType, quizState.currentQuestion.kana);
     }
     renderScore();
-    // Auto-advance after 800ms delay to show answer feedback
-    setTimeout(() => advanceToNextQuestion(), 800);
+    if (quizState.autoAdvance) {
+      setTimeout(() => advanceToNextQuestion(), quizState.feedbackDelay);
+    } else {
+      setTimeout(() => { nextBtn.style.display = 'inline-block'; }, quizState.feedbackDelay);
+    }
   }
 
   function disableOptions() {
@@ -184,20 +499,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderScore() {
-    scoreSpan.textContent = `Score: ${quizState.score}`;
+    scoreSpan.textContent = `Điểm: ${quizState.score}`;
   }
 
   function showResult() {
     quizState.quizComplete = true;
+    saveQuizProgress();
     optionsArea.innerHTML = '';
-    hiraganaChar.textContent = `Quiz Complete!`;
-    scoreSpan.textContent = `Final Score: ${quizState.score} / ${quizState.totalQuestions}`;
+    hiraganaChar.textContent = `Hoàn Thành Quiz!`;
+    scoreSpan.textContent = `Điểm Cuối: ${quizState.score} / ${quizState.totalQuestions}`;
     nextBtn.style.display = 'none';
     skipBtn.style.display = 'none';
     reviewArea.style.display = 'none';
-    if (quizState.incorrectAnswers.length > 0) {
+    if (quizState.reviewEnabled && quizState.incorrectAnswers.length > 0) {
       reviewBtn.style.display = 'inline-block';
     }
+    reviewAllBtn.style.display = 'inline-block';
   }
 
   function showReview() {
@@ -205,18 +522,56 @@ document.addEventListener('DOMContentLoaded', () => {
     renderReviewQuestion();
   }
 
+  function showReviewAll() {
+    quizState.reviewIndex = 0;
+    renderReviewAllQuestion();
+  }
+
+  function renderReviewAllQuestion() {
+    if (quizState.questionHistory.length === 0) return;
+    const item = quizState.questionHistory[quizState.reviewIndex];
+    const statusLabel = item.isCorrect ? 'Đúng' : 'Sai';
+    const statusColor = item.isCorrect ? '#bbf7d0' : '#fecaca';
+    reviewArea.innerHTML = `
+      <div style="padding: 20px; background: #f5f5f5; border-radius: 8px;">
+        <h3>${quizState.reviewIndex + 1} / ${quizState.questionHistory.length}</h3>
+        <p><strong>Ký tự:</strong> ${item.kana}</p>
+        <p><strong>Câu trả lời:</strong> ${item.userAnswer || 'Đã bỏ qua'}</p>
+        <p><strong>Đáp án đúng:</strong> ${item.correctRomaji}</p>
+        <p><strong>Kết quả:</strong> <span style="background:${statusColor};padding:2px 8px;border-radius:4px;">${statusLabel}</span></p>
+        <div style="margin-top: 15px;">
+          ${quizState.reviewIndex > 0 ? '<button id="review-prev-btn">Trước</button>' : ''}
+          ${quizState.reviewIndex < quizState.questionHistory.length - 1 ? '<button id="review-next-btn">Tiếp</button>' : ''}
+        </div>
+      </div>
+    `;
+    reviewArea.style.display = 'block';
+    optionsArea.style.display = 'none';
+
+    const prevBtn = document.getElementById('review-prev-btn');
+    const nextReviewBtn = document.getElementById('review-next-btn');
+    if (prevBtn) prevBtn.addEventListener('click', () => {
+      quizState.reviewIndex--;
+      renderReviewAllQuestion();
+    });
+    if (nextReviewBtn) nextReviewBtn.addEventListener('click', () => {
+      quizState.reviewIndex++;
+      renderReviewAllQuestion();
+    });
+  }
+
   function renderReviewQuestion() {
     if (quizState.incorrectAnswers.length === 0) return;
     const item = quizState.incorrectAnswers[quizState.reviewIndex];
     reviewArea.innerHTML = `
       <div style="padding: 20px; background: #f5f5f5; border-radius: 8px;">
-        <h3>Question ${quizState.reviewIndex + 1} of ${quizState.incorrectAnswers.length}</h3>
-        <p><strong>Character:</strong> ${item.kana}</p>
-        <p><strong>Your answer:</strong> ${item.userAnswer || 'Skipped'}</p>
-        <p><strong>Correct answer:</strong> ${item.correctRomaji}</p>
+        <h3>${quizState.reviewIndex + 1} / ${quizState.incorrectAnswers.length}</h3>
+        <p><strong>Ký tự:</strong> ${item.kana}</p>
+        <p><strong>Câu trả lời:</strong> ${item.userAnswer || 'Đã bỏ qua'}</p>
+        <p><strong>Đáp án đúng:</strong> ${item.correctRomaji}</p>
         <div style="margin-top: 15px;">
-          ${quizState.reviewIndex > 0 ? '<button id="review-prev-btn">Previous</button>' : ''}
-          ${quizState.reviewIndex < quizState.incorrectAnswers.length - 1 ? '<button id="review-next-btn">Next</button>' : ''}
+          ${quizState.reviewIndex > 0 ? '<button id="review-prev-btn">Trước</button>' : ''}
+          ${quizState.reviewIndex < quizState.incorrectAnswers.length - 1 ? '<button id="review-next-btn">Tiếp</button>' : ''}
         </div>
       </div>
     `;
@@ -235,6 +590,119 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Weak Review logic
+  function startWeakReview() {
+    const type = quizState.quizType;
+    const weakItems = loadWeakItems();
+    const fullData = QUIZ_TYPE_CONFIG[type].data;
+    const weakSet = new Set(weakItems[type]);
+    quizState.questionSet = shuffle(fullData.filter(item => weakSet.has(item.kana)));
+    quizState.totalQuestions = quizState.questionSet.length;
+    quizState.score = 0;
+    quizState.questionCount = 0;
+    quizState.isAnswered = false;
+    quizState.quizComplete = false;
+    quizState.incorrectAnswers = [];
+    quizState.reviewIndex = 0;
+    quizState.questionHistory = [];
+    mainQuiz.style.display = 'flex';
+    saveSession({ screen: 'mode-selection-screen' });
+    reviewBtn.style.display = 'none';
+    reviewAllBtn.style.display = 'none';
+    reviewArea.style.display = 'none';
+    renderQuestion();
+  }
+
+  // Flashcard logic
+  function startFlashcard() {
+    const group = GROUP_CONFIG[quizState.quizType][quizState.selectedGroup];
+    const fullData = QUIZ_TYPE_CONFIG[quizState.quizType].data;
+    const filtered = group.filter === null
+      ? fullData.slice()
+      : fullData.filter(item => group.filter.includes(item.romaji));
+    quizState.questionSet = shuffle(filtered);
+    quizState.fcIndex = 0;
+    quizState.fcKnew = 0;
+    quizState.fcNeedReview = 0;
+    quizState.fcAnswerShown = false;
+    flashcardScreen.style.display = 'flex';
+    saveSession({ screen: 'mode-selection-screen' });
+    renderFlashcard();
+  }
+
+  function renderFlashcard() {
+    const card = quizState.questionSet[quizState.fcIndex];
+    fcProgress.textContent = `${quizState.fcIndex + 1} / ${quizState.questionSet.length}`;
+    fcCharacter.textContent = card.kana;
+    fcAnswer.textContent = card.romaji;
+    fcAnswer.style.display = 'none';
+    fcShowBtn.style.display = 'inline-block';
+    fcKnewBtn.style.display = 'none';
+    fcReviewBtn.style.display = 'none';
+    quizState.fcAnswerShown = false;
+  }
+
+  function showFlashcardAnswer() {
+    fcAnswer.style.display = 'block';
+    fcShowBtn.style.display = 'none';
+    fcKnewBtn.style.display = 'inline-block';
+    fcReviewBtn.style.display = 'inline-block';
+    quizState.fcAnswerShown = true;
+  }
+
+  function handleFlashcardResult(knew) {
+    if (knew) {
+      quizState.fcKnew++;
+    } else {
+      quizState.fcNeedReview++;
+    }
+    quizState.fcIndex++;
+    if (quizState.fcIndex < quizState.questionSet.length) {
+      renderFlashcard();
+    } else {
+      showFlashcardSummary();
+    }
+  }
+
+  function showFlashcardSummary() {
+    fcCharacter.textContent = 'Hoàn Thành Phiên!';
+    fcAnswer.style.display = 'none';
+    fcShowBtn.style.display = 'none';
+    fcKnewBtn.style.display = 'none';
+    fcReviewBtn.style.display = 'none';
+    fcProgress.innerHTML = `
+      <p>Tổng: ${quizState.questionSet.length}</p>
+      <p style="color:#16a34a;">Đã biết: ${quizState.fcKnew}</p>
+      <p style="color:#dc2626;">Cần ôn: ${quizState.fcNeedReview}</p>
+    `;
+  }
+
+  fcShowBtn.addEventListener('click', () => {
+    showFlashcardAnswer();
+  });
+
+  fcKnewBtn.addEventListener('click', () => {
+    handleFlashcardResult(true);
+  });
+
+  fcReviewBtn.addEventListener('click', () => {
+    handleFlashcardResult(false);
+  });
+
+  fcRestartBtn.addEventListener('click', () => {
+    flashcardScreen.style.display = 'none';
+    modeSelectionScreen.style.display = 'flex';
+    clearSession();
+    quizState.mode = null;
+    quizState.quizType = null;
+    quizState.questionSet = null;
+    quizState.selectedGroup = 'all';
+    quizState.fcIndex = 0;
+    quizState.fcKnew = 0;
+    quizState.fcNeedReview = 0;
+    quizState.fcAnswerShown = false;
+  });
+
   nextBtn.addEventListener('click', () => {
     advanceToNextQuestion();
   });
@@ -247,35 +715,87 @@ document.addEventListener('DOMContentLoaded', () => {
       correctRomaji: quizState.currentQuestion.correctRomaji,
       userAnswer: null
     });
+    quizState.questionHistory.push({
+      kana: quizState.currentQuestion.kana,
+      correctRomaji: quizState.currentQuestion.correctRomaji,
+      userAnswer: null,
+      isCorrect: false
+    });
+    addToWeakItem(quizState.quizType, quizState.currentQuestion.kana);
     disableOptions();
-    setTimeout(() => advanceToNextQuestion(), 800);
+    setTimeout(() => advanceToNextQuestion(), quizState.feedbackDelay);
   });
 
   reviewBtn.addEventListener('click', () => {
     showReview();
   });
 
+  reviewAllBtn.addEventListener('click', () => {
+    showReviewAll();
+  });
+
   restartBtn.addEventListener('click', () => {
-    // Return to quiz type selection
     mainQuiz.style.display = 'none';
-    quizTypeScreen.style.display = 'flex';
-    // Reset state
+    modeSelectionScreen.style.display = 'flex';
+    clearSession();
+    quizState.mode = null;
     quizState.quizType = null;
     quizState.questionSet = null;
     quizState.difficulty = null;
     quizState.totalQuestions = 10;
     quizState.score = 0;
-    quizState.questionCount = 0;    quizState.isAnswered = false;    quizState.quizComplete = false;
+    quizState.questionCount = 0;
+    quizState.isAnswered = false;
+    quizState.quizComplete = false;
     quizState.incorrectAnswers = [];
     quizState.reviewIndex = 0;
+    quizState.autoAdvance = true;
+    quizState.feedbackDelay = 800;
+    quizState.reviewEnabled = true;
+    quizState.selectedGroup = 'all';
+    quizState.questionHistory = [];
     reviewBtn.style.display = 'none';
+    reviewAllBtn.style.display = 'none';
     reviewArea.style.display = 'none';
+    settingsScreen.style.display = 'none';
+    groupFilterScreen.style.display = 'none';
   });
 
-  // Initial state: show quiz type screen, hide others
-  quizTypeScreen.style.display = 'flex';
+  viewProgressBtn.addEventListener('click', () => {
+    showProgressScreen();
+  });
+
+  backFromProgressBtn.addEventListener('click', () => {
+    progressScreen.style.display = 'none';
+    modeSelectionScreen.style.display = 'flex';
+    clearSession();
+  });
+
+  resetWeakItemsBtn.addEventListener('click', () => {
+    if (window.confirm('Xóa toàn bộ mục yếu? Không thể hoàn tác.')) {
+      resetWeakItems();
+      showProgressScreen();
+    }
+  });
+
+  resetProgressBtn.addEventListener('click', () => {
+    if (window.confirm('Xóa toàn bộ tiến trình? Không thể hoàn tác.')) {
+      resetProgress();
+      showProgressScreen();
+    }
+  });
+
+  // Hide all screens, then restore session or show home
+  progressScreen.style.display = 'none';
+  quizTypeScreen.style.display = 'none';
   difficultyScreen.style.display = 'none';
+  groupFilterScreen.style.display = 'none';
+  settingsScreen.style.display = 'none';
   mainQuiz.style.display = 'none';
+  flashcardScreen.style.display = 'none';
+  modeSelectionScreen.style.display = 'none';
   reviewBtn.style.display = 'none';
+  reviewAllBtn.style.display = 'none';
   reviewArea.style.display = 'none';
+  restoreSession();
 });

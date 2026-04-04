@@ -7,19 +7,77 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="quiztype-screen" class="quiz-container" style="display: flex;">
-    <h2>Select Quiz Type</h2>
+  <div id="mode-selection-screen" class="quiz-container" style="display: flex;">
+    <h2>Chọn Chế Độ</h2>
+    <div id="mode-buttons">
+      <button class="mode-btn" data-mode="quiz">Chế Độ Quiz</button>
+      <button class="mode-btn" data-mode="flashcard">Chế Độ Flashcard</button>
+      <button id="weak-review-btn">Ôn Điểm Yếu</button>
+    </div>
+    <button id="view-progress-btn">Xem Tiến Trình</button>
+  </div>
+  <div id="progress-screen" class="quiz-container" style="display: none;">
+    <h2>Tiến Trình Học</h2>
+    <div id="progress-content"></div>
+    <div id="progress-actions">
+      <button id="reset-weak-items-btn">Xóa Mục Yếu</button>
+      <button id="reset-progress-btn">Xóa Tiến Trình</button>
+      <button id="back-from-progress-btn">Quay Lại</button>
+    </div>
+  </div>
+  <div id="quiztype-screen" class="quiz-container" style="display: none;">
+    <h2>Chọn Loại Quiz</h2>
     <div id="quiztype-buttons">
       <button class="quiztype-btn" data-quiztype="hiragana">Hiragana</button>
       <button class="quiztype-btn" data-quiztype="katakana">Katakana</button>
+      <button class="quiztype-btn" data-quiztype="kanji">Kanji</button>
     </div>
+    <button id="back-from-quiztype-btn" class="back-btn">Quay Lại</button>
   </div>
   <div id="difficulty-screen" class="quiz-container" style="display: none;">
-    <h2>Select Difficulty</h2>
+    <h2>Chọn Độ Khó</h2>
     <div id="difficulty-buttons">
-      <button class="difficulty-btn" data-difficulty="easy">Easy</button>
-      <button class="difficulty-btn" data-difficulty="medium">Medium</button>
-      <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+      <button class="difficulty-btn" data-difficulty="easy">Dễ</button>
+      <button class="difficulty-btn" data-difficulty="medium">Trung Bình</button>
+      <button class="difficulty-btn" data-difficulty="hard">Khó</button>
+    </div>
+    <button id="back-from-difficulty-btn" class="back-btn">Quay Lại</button>
+  </div>
+  <div id="group-filter-screen" class="quiz-container" style="display: none;">
+    <h2>Chọn Nhóm</h2>
+    <div id="group-buttons"></div>
+    <div class="button-row">
+      <button id="back-to-difficulty-btn">Quay Lại</button>
+      <button id="confirm-group-btn">Tiếp Theo</button>
+    </div>
+  </div>
+  <div id="settings-screen" class="quiz-container" style="display: none;">
+    <h2>Cài Đặt Quiz</h2>
+    <div class="setting-group">
+      <p>Tự động chuyển câu</p>
+      <div class="setting-options">
+        <button class="setting-btn active" data-setting="autoAdvance" data-value="true">Bật</button>
+        <button class="setting-btn" data-setting="autoAdvance" data-value="false">Tắt</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <p>Độ trễ phản hồi</p>
+      <div class="setting-options">
+        <button class="setting-btn" data-setting="feedbackDelay" data-value="500">500ms</button>
+        <button class="setting-btn active" data-setting="feedbackDelay" data-value="800">800ms</button>
+        <button class="setting-btn" data-setting="feedbackDelay" data-value="1200">1200ms</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <p>Ôn lỗi sau quiz</p>
+      <div class="setting-options">
+        <button class="setting-btn active" data-setting="reviewEnabled" data-value="true">Bật</button>
+        <button class="setting-btn" data-setting="reviewEnabled" data-value="false">Tắt</button>
+      </div>
+    </div>
+    <div class="button-row">
+      <button id="back-to-group-btn">Quay Lại</button>
+      <button id="start-quiz-btn">Bắt Đầu Quiz</button>
     </div>
   </div>
   <div class="quiz-container" id="main-quiz" style="display: none;">
@@ -34,17 +92,32 @@
       <!-- Answer buttons will be rendered here -->
     </div>
     <div class="info-bar">
-      <span id="score">Score: 0</span>
+      <span id="score">Điểm: 0</span>
     </div>
     <div class="button-row">
-      <button id="skip-btn">Skip</button>
-      <button id="restart-btn">Restart</button>
-      <button id="next-btn" style="display:none;">Next</button>
-      <button id="review-btn" style="display:none;">Review Mistakes</button>
+      <button id="skip-btn">Bỏ Qua</button>
+      <button id="restart-btn">Làm Lại</button>
+      <button id="next-btn" style="display:none;">Tiếp</button>
+      <button id="review-btn" style="display:none;">Ôn Câu Sai</button>
+      <button id="review-all-btn" style="display:none;">Xem Lại Tất Cả</button>
     </div>
     <div id="review-area" style="display:none;"></div>
   </div>
+  <div id="flashcard-screen" class="quiz-container" style="display: none;">
+    <div id="fc-progress"></div>
+    <div id="fc-card">
+      <div id="fc-character"></div>
+      <div id="fc-answer" style="display:none;"></div>
+    </div>
+    <div id="fc-buttons">
+      <button id="fc-show-btn">Hiện Đáp Án</button>
+      <button id="fc-knew-btn" style="display:none;">Tôi biết rồi</button>
+      <button id="fc-review-btn" style="display:none;">Cần ôn lại</button>
+    </div>
+    <button id="fc-restart-btn">Làm Lại</button>
+  </div>
   <script src="hiraganaData.js"></script>
+  <script src="progress.js"></script>
   <script src="quiz.js"></script>
 </body>
 </html>

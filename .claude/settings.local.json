@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash scripts/verify.sh)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5500)",
+      "Bash(npx playwright:*)",
+      "Bash(node -e \"require\\(''''/Users/protonmn004/.nvm/versions/node/v22.17.1/lib/node_modules/playwright''''\\)\")",
+      "Bash(npm root:*)",
+      "Bash(true find:*)",
+      "Bash(kill -0 16333)",
+      "WebSearch",
+      "Bash(python3 -m http.server 5500)"
+    ]
+  }
+}

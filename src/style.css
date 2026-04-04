@@ -175,3 +175,329 @@ body {
 #next-btn:hover {
   background: #4338ca;
 }
+#group-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+.group-btn {
+  padding: 12px 0;
+  font-size: 1rem;
+  border: 2px solid #e0e7ff;
+  border-radius: 8px;
+  background: #fff;
+  color: #3730a3;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  font-weight: bold;
+}
+.group-btn.active {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: #fff;
+}
+.group-btn:hover:not(.active) {
+  background: #e0e7ff;
+}
+#confirm-group-btn {
+  padding: 12px 36px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 8px;
+  background: #6366f1;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+#confirm-group-btn:hover {
+  background: #4338ca;
+}
+.setting-group {
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.setting-group p {
+  margin: 0 0 8px 0;
+  font-weight: bold;
+  color: #444;
+}
+.setting-options {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.setting-btn {
+  padding: 10px 22px;
+  font-size: 1rem;
+  border: 2px solid #e0e7ff;
+  border-radius: 8px;
+  background: #fff;
+  color: #3730a3;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.setting-btn.active {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: #fff;
+}
+.setting-btn:hover:not(.active) {
+  background: #e0e7ff;
+}
+#start-quiz-btn {
+  margin-top: 8px;
+  padding: 12px 36px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 8px;
+  background: #6366f1;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+#start-quiz-btn:hover {
+  background: #4338ca;
+}
+#mode-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+.mode-btn {
+  padding: 16px 32px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 10px;
+  background: #e0e7ff;
+  color: #3730a3;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  font-weight: bold;
+}
+.mode-btn:hover {
+  background: #6366f1;
+  color: #fff;
+}
+#flashcard-screen {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 350px;
+}
+#fc-progress {
+  font-size: 1rem;
+  color: #6366f1;
+  margin-bottom: 16px;
+  text-align: center;
+}
+#fc-progress p {
+  margin: 4px 0;
+  font-size: 1.1rem;
+}
+#fc-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 28px;
+}
+#fc-character {
+  font-size: 4rem;
+  color: #2d2d2d;
+  margin-bottom: 16px;
+}
+#fc-answer {
+  font-size: 1.8rem;
+  color: #3730a3;
+  font-weight: bold;
+}
+#fc-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+#fc-show-btn {
+  padding: 12px 32px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  background: #6366f1;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+#fc-show-btn:hover {
+  background: #4338ca;
+}
+#fc-knew-btn {
+  padding: 12px 24px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  background: #bbf7d0;
+  color: #15803d;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+#fc-knew-btn:hover {
+  background: #86efac;
+}
+#fc-review-btn {
+  padding: 12px 24px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  background: #fecaca;
+  color: #dc2626;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+#fc-review-btn:hover {
+  background: #fca5a5;
+}
+#fc-restart-btn {
+  padding: 8px 20px;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  background: #e0e7ff;
+  color: #3730a3;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#fc-restart-btn:hover {
+  background: #c7d2fe;
+}
+#weak-review-btn {
+  padding: 16px 32px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 10px;
+  background: #fef3c7;
+  color: #92400e;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s, color 0.2s;
+}
+#weak-review-btn:hover {
+  background: #fde68a;
+}
+#view-progress-btn {
+  margin-top: 18px;
+  padding: 10px 24px;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  background: #e0e7ff;
+  color: #3730a3;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#view-progress-btn:hover {
+  background: #c7d2fe;
+}
+#progress-screen {
+  flex-direction: column;
+  align-items: center;
+  max-width: 540px;
+}
+#progress-content {
+  width: 100%;
+}
+.progress-section {
+  width: 100%;
+  margin-bottom: 20px;
+}
+.progress-section h3 {
+  font-size: 1rem;
+  color: #444;
+  margin: 0 0 8px 0;
+}
+.progress-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.progress-table th,
+.progress-table td {
+  padding: 6px 8px;
+  text-align: center;
+  border: 1px solid #e5e7eb;
+}
+.progress-table th {
+  background: #f0f0ff;
+  color: #3730a3;
+  font-weight: bold;
+}
+.progress-table td:first-child {
+  text-align: left;
+}
+#progress-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+#reset-weak-items-btn {
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  background: #fef3c7;
+  color: #92400e;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+#reset-weak-items-btn:hover {
+  background: #fde68a;
+}
+#reset-progress-btn {
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  background: #fecaca;
+  color: #dc2626;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+#reset-progress-btn:hover {
+  background: #fca5a5;
+}
+#back-from-progress-btn {
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  background: #e0e7ff;
+  color: #3730a3;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#back-from-progress-btn:hover {
+  background: #c7d2fe;
+}
+.back-btn {
+  margin-top: 20px;
+  padding: 10px 24px;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  background: #e0e7ff;
+  color: #3730a3;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.back-btn:hover {
+  background: #c7d2fe;
+}
