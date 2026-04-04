@@ -15,7 +15,8 @@ function getDefaultProgress() {
     byType: {
       hiragana: { totalQuizzes: 0, totalQuestions: 0, correctAnswers: 0, wrongAnswers: 0 },
       katakana:  { totalQuizzes: 0, totalQuestions: 0, correctAnswers: 0, wrongAnswers: 0 },
-      kanji:     { totalQuizzes: 0, totalQuestions: 0, correctAnswers: 0, wrongAnswers: 0 }
+      kanji:     { totalQuizzes: 0, totalQuestions: 0, correctAnswers: 0, wrongAnswers: 0 },
+      mixed:     { totalQuizzes: 0, totalQuestions: 0, correctAnswers: 0, wrongAnswers: 0 }
     }
   };
 }
@@ -24,7 +25,13 @@ function loadProgress() {
   try {
     const raw = localStorage.getItem(PROGRESS_KEY);
     if (!raw) return getDefaultProgress();
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    const def = getDefaultProgress();
+    // ensure all byType keys exist (migration for newly added types)
+    Object.keys(def.byType).forEach(key => {
+      if (!parsed.byType[key]) parsed.byType[key] = def.byType[key];
+    });
+    return parsed;
   } catch (e) {
     return getDefaultProgress();
   }
@@ -51,7 +58,7 @@ function resetProgress() {
 const WEAK_ITEMS_KEY = 'hiragna_weak_items';
 
 function getDefaultWeakItems() {
-  return { hiragana: [], katakana: [], kanji: [] };
+  return { hiragana: [], katakana: [], kanji: [], mixed: [] };
 }
 
 function loadWeakItems() {
@@ -64,7 +71,8 @@ function loadWeakItems() {
     return {
       hiragana: parsed.hiragana || def.hiragana,
       katakana: parsed.katakana || def.katakana,
-      kanji:    parsed.kanji    || def.kanji
+      kanji:    parsed.kanji    || def.kanji,
+      mixed:    parsed.mixed    || def.mixed
     };
   } catch (e) {
     return getDefaultWeakItems();

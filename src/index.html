@@ -31,8 +31,20 @@
       <button class="quiztype-btn" data-quiztype="hiragana">Hiragana</button>
       <button class="quiztype-btn" data-quiztype="katakana">Katakana</button>
       <button class="quiztype-btn" data-quiztype="kanji">Kanji</button>
+      <button id="mixed-btn">Hỗn Hợp</button>
     </div>
     <button id="back-from-quiztype-btn" class="back-btn">Quay Lại</button>
+  </div>
+  <div id="mix-type-screen" class="quiz-container" style="display: none;">
+    <h2>Chọn Loại Kết Hợp</h2>
+    <p class="mix-type-hint">Chọn ít nhất 2 loại</p>
+    <div class="mix-type-options">
+      <label><input type="checkbox" value="hiragana"> Hiragana</label>
+      <label><input type="checkbox" value="katakana"> Katakana</label>
+      <label><input type="checkbox" value="kanji"> Kanji</label>
+    </div>
+    <button id="start-mixed-btn" disabled>Bắt Đầu</button>
+    <button id="back-from-mix-type-btn" class="back-btn">← Quay Lại</button>
   </div>
   <div id="difficulty-screen" class="quiz-container" style="display: none;">
     <h2>Chọn Độ Khó</h2>

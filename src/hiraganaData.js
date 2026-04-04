@@ -99,11 +99,15 @@ const GROUP_CONFIG = {
     numbers: { label: "Numbers", filter: ["one","two","three","four","five","six","seven","eight","nine","ten","hundred","thousand"] },
     nature:  { label: "Nature",  filter: ["mountain","river","tree","fire","water","earth","sun","moon"] },
     people:  { label: "People",  filter: ["person","mouth","woman","man","child","father","mother"] }
+  },
+  mixed: {
+    all: { label: "Tất Cả", filter: null }
   }
 };
 
 const QUIZ_TYPE_CONFIG = {
-  hiragana: { label: "Hiragana", data: hiraganaData },
+  hiragana: { label: "Hiragana",  data: hiraganaData },
   katakana:  { label: "Katakana",  data: katakanaData },
-  kanji:     { label: "Kanji",     data: kanjiData }
+  kanji:     { label: "Kanji",     data: kanjiData },
+  mixed:     { label: "Hỗn Hợp",  data: [] }
 };
