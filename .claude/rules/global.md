@@ -27,8 +27,8 @@
 - **Không được implement trước khi người dùng xác nhận**, bất kể task nhỏ hay lớn.
 
 **Sau khi implement:**
-1. Self-review (luôn bắt buộc)
-2. Cập nhật `result.md` với kết quả (dùng template `result-record-template.md`)
+1. Self-review (luôn bắt buộc) — mỗi check phải có bằng chứng, không được claim "pass" chỉ bằng suy đoán
+2. Cập nhật `result.md` — ghi rõ đã verify bằng cách nào và phần nào còn chờ người dùng
 3. Đề xuất người dùng verify (ghi rõ manual verify steps)
 
 Chi tiết: `.claude/rules/self-test.md`
@@ -59,6 +59,27 @@ Docs phải sync trước khi archive. Chi tiết: `.claude/rules/docs-sync.md`
 Diagnosis và implement là hai bước tách biệt. Không được vừa debug vừa tự sửa.
 
 Chi tiết phân loại scope và quy trình: `.claude/rules/bug-handling.md`
+
+---
+
+## Grapuco — code graph tool
+
+### Nguyên tắc
+- Grapuco là bản đồ hỗ trợ, **không thay thế** việc đọc code thật.
+- Với kết luận quan trọng hoặc trước khi sửa code → đối chiếu lại code nếu cần.
+- Nếu codebase đã thay đổi đáng kể kể từ lần index cuối → nhắc người dùng cập nhật index.
+
+### Khi nào dùng
+- **Ưu tiên dùng:** project audit, impact analysis, dependency tracing, data flow tracing.
+- **Dùng khi cần:** big-feature (phân tích trước khi lên plan), diagnose-bug (trace call chain).
+- **Không bắt buộc:** task nhỏ, fix-bug, docs-sync, archive-task.
+
+### Checklist khi dùng Grapuco
+```
+- [x] Đã dùng Grapuco (architecture / dependency / impact / flow)
+- [x] Đã đối chiếu lại với code thật ở vùng liên quan
+- [ ] Cần cập nhật Grapuco index trước khi tin vào kết quả
+```
 
 ---
 

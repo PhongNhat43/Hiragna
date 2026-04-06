@@ -22,10 +22,16 @@
 
 ## Self-review
 
-- [ ] Logic đúng, không regression rõ ràng
-- [ ] Không sửa ngoài scope đã duyệt trong `plan.md`
-- [ ] Các buttons/elements liên quan vẫn hoạt động
+_Mỗi check phải ghi bằng chứng ngắn gọn — không được chỉ đánh dấu không có trace._
+
+- [ ] Logic đúng, không regression rõ ràng — _vd: "trace quiz.js:517, guard quizType !== 'mixed' đúng chỗ"_
+- [ ] Không sửa ngoài scope đã duyệt trong `plan.md` — _vd: "chỉ sửa 3 file trong plan"_
+- [ ] Các buttons/elements liên quan vẫn hoạt động — _vd: "trace flow back navigation, không đụng handler cũ"_
 - [ ] _(thêm check cụ thể của task nếu cần)_
+
+**Đã verify (self-review):** _(liệt kê ngắn những gì đã trace/confirm)_
+
+**Chờ người dùng verify:** _(liệt kê những gì chưa thể confirm không có runtime)_
 
 ---
 

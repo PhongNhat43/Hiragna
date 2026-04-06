@@ -30,7 +30,17 @@ const quizState = {
   fcKnew: 0,
   fcNeedReview: 0,
   fcAnswerShown: false,
-  mixedTypes: [] // ['hiragana','katakana',...] — only used when quizType === 'mixed'
+  mixedTypes: [], // ['hiragana','katakana',...] — only used when quizType === 'mixed'
+  // Pronunciation Trainer
+  ptPhase: null,       // 'learn' | 'practice' | 'choose'
+  ptItems: [],         // items cho phase hiện tại
+  ptLearnItems: [],    // original lesson items (dùng để shuffle sang practice)
+  ptIndex: 0,
+  ptUnsureItems: [],   // items đánh "Chưa chắc" trong practice
+  ptWrongItems: [],    // items trả lời sai trong choose
+  ptChooseTotal: 0,    // số items đưa vào choose phase (để tính kết quả)
+  ptAnswerShown: false,
+  ptLessonKey: null    // e.g. 'basic_vowels'
 };
 
 // Import QUIZ_TYPE_CONFIG from hiraganaData.js
@@ -49,13 +59,18 @@ function shuffle(array) {
 
 function generateQuestion() {
   const dataSet = quizState.questionSet;
-  const correctIdx = getRandomInt(dataSet.length);
+  // Sequential pick (dedup): cycle through shuffled array by questionCount
+  const correctIdx = quizState.questionCount % dataSet.length;
   const correct = dataSet[correctIdx];
   const optionsPool = dataSet.length >= 4 ? dataSet : QUIZ_TYPE_CONFIG[quizState.quizType].data;
   let options = [correct.romaji];
-  while (options.length < 4) {
+  // Guard: max attempts to prevent infinite loop when unique romaji < 4
+  const maxAttempts = optionsPool.length * 4;
+  let attempts = 0;
+  while (options.length < 4 && attempts < maxAttempts) {
     const rand = optionsPool[getRandomInt(optionsPool.length)].romaji;
     if (!options.includes(rand)) options.push(rand);
+    attempts++;
   }
   shuffle(options);
   quizState.currentQuestion = {
@@ -77,6 +92,15 @@ function validateAnswer(selectedRomaji) {
 }
 
 
+
+function speakJapanese(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'ja-JP';
+  utt.rate = 0.8;
+  window.speechSynthesis.speak(utt);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   // UI rendering and event listeners
@@ -122,6 +146,36 @@ document.addEventListener('DOMContentLoaded', () => {
   const startMixedBtn = document.getElementById('start-mixed-btn');
   const backFromMixTypeBtn = document.getElementById('back-from-mix-type-btn');
   const mixTypeCheckboxes = document.querySelectorAll('.mix-type-options input[type="checkbox"]');
+  // Pronunciation Trainer DOM refs
+  const ptBtn = document.getElementById('pt-btn');
+  const ptTypeScreen = document.getElementById('pt-type-screen');
+  const ptTypeBtns = document.querySelectorAll('.pt-type-btn');
+  const backFromPTTypeBtn = document.getElementById('back-from-pt-type-btn');
+  const ptLessonScreen = document.getElementById('pt-lesson-screen');
+  const ptLessonTitle = document.getElementById('pt-lesson-title');
+  const ptLessonButtonsContainer = document.getElementById('pt-lesson-buttons');
+  const backFromPTLessonBtn = document.getElementById('back-from-pt-lesson-btn');
+  const ptScreen = document.getElementById('pt-screen');
+  const ptPhaseLabel = document.getElementById('pt-phase-label');
+  const ptProgressEl = document.getElementById('pt-progress');
+  const ptCardSection = document.getElementById('pt-card-section');
+  const ptCharacter = document.getElementById('pt-character');
+  const ptReading = document.getElementById('pt-reading');
+  const ptChooseSection = document.getElementById('pt-choose-section');
+  const ptChoiceOptionsContainer = document.getElementById('pt-choice-options');
+  const ptSpeakBtn = document.getElementById('pt-speak-btn');
+  const ptRevealBtn = document.getElementById('pt-reveal-btn');
+  const ptKnewBtn = document.getElementById('pt-knew-btn');
+  const ptUnsureBtn = document.getElementById('pt-unsure-btn');
+  const ptNextBtn = document.getElementById('pt-next-btn');
+  const ptExitBtn = document.getElementById('pt-exit-btn');
+  const ptSummaryScreen = document.getElementById('pt-summary-screen');
+  const ptSummaryTitle = document.getElementById('pt-summary-title');
+  const ptSummaryContent = document.getElementById('pt-summary-content');
+  const ptRetryBtn = document.getElementById('pt-retry-btn');
+  const ptNextLessonBtn = document.getElementById('pt-next-lesson-btn');
+  const ptPTHomeBtn = document.getElementById('pt-pt-home-btn');
+
   const weakReviewBtn = document.getElementById('weak-review-btn');
   const progressScreen = document.getElementById('progress-screen');
   const progressContent = document.getElementById('progress-content');
@@ -452,6 +506,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ? fullData
         : fullData.filter(item => group.filter.includes(item.romaji));
     }
+    // Slice 3: shuffle copy for sequential dedup — không mutate original data
+    quizState.questionSet = shuffle(quizState.questionSet.slice());
     quizState.score = 0;
     quizState.questionCount = 0;
     quizState.isAnswered = false;
@@ -484,6 +540,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderQuestion() {
+    // Slice 1: reset display state bị ẩn từ review hoặc showResult
+    optionsArea.style.display = '';
+    skipBtn.style.display = '';
     generateQuestion();
     hiraganaChar.textContent = quizState.currentQuestion.kana;
     optionsArea.innerHTML = '';
@@ -537,9 +596,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     renderScore();
     if (quizState.autoAdvance) {
-      setTimeout(() => advanceToNextQuestion(), quizState.feedbackDelay);
+      setTimeout(() => {
+        if (quizState.questionSet !== null) advanceToNextQuestion();
+      }, quizState.feedbackDelay);
     } else {
-      setTimeout(() => { nextBtn.style.display = 'inline-block'; }, quizState.feedbackDelay);
+      setTimeout(() => {
+        if (quizState.questionSet !== null) nextBtn.style.display = 'inline-block';
+      }, quizState.feedbackDelay);
     }
   }
 
@@ -778,7 +841,9 @@ document.addEventListener('DOMContentLoaded', () => {
       addToWeakItem(quizState.quizType, quizState.currentQuestion.kana);
     }
     disableOptions();
-    setTimeout(() => advanceToNextQuestion(), quizState.feedbackDelay);
+    setTimeout(() => {
+      if (quizState.questionSet !== null) advanceToNextQuestion();
+    }, quizState.feedbackDelay);
   });
 
   reviewBtn.addEventListener('click', () => {
@@ -886,6 +951,276 @@ document.addEventListener('DOMContentLoaded', () => {
     saveSession({ screen: 'quiztype-screen', mode: quizState.mode });
   });
 
+  // ========================
+  // Pronunciation Trainer (PT)
+  // ========================
+
+  const PT_LESSON_KEYS = ['basic_vowels', 'k_group', 's_group'];
+  const PT_LESSON_LABELS = { basic_vowels: 'Nguyên âm', k_group: 'Nhóm K', s_group: 'Nhóm S' };
+
+  function renderPTLessons() {
+    const type = quizState.quizType;
+    const groups = GROUP_CONFIG[type];
+    const data = QUIZ_TYPE_CONFIG[type].data;
+    ptLessonTitle.textContent = QUIZ_TYPE_CONFIG[type].label + ' — Chọn Bài';
+    ptLessonButtonsContainer.innerHTML = '';
+    PT_LESSON_KEYS.forEach((key, idx) => {
+      const group = groups[key];
+      if (!group) return;
+      const count = group.filter
+        ? data.filter(item => group.filter.includes(item.romaji)).length
+        : data.length;
+      const btn = document.createElement('button');
+      btn.className = 'pt-lesson-btn';
+      btn.textContent = `Bài ${idx + 1} — ${PT_LESSON_LABELS[key]} (${count} ký tự)`;
+      btn.addEventListener('click', () => startPTLearn(key));
+      ptLessonButtonsContainer.appendChild(btn);
+    });
+  }
+
+  function startPTLearn(lessonKey) {
+    const type = quizState.quizType;
+    const group = GROUP_CONFIG[type][lessonKey];
+    const fullData = QUIZ_TYPE_CONFIG[type].data;
+    const items = group.filter
+      ? fullData.filter(item => group.filter.includes(item.romaji))
+      : fullData.slice();
+
+    quizState.ptLessonKey = lessonKey;
+    quizState.ptPhase = 'learn';
+    quizState.ptLearnItems = items.slice();
+    quizState.ptItems = items.slice(); // sequential for learn
+    quizState.ptIndex = 0;
+    quizState.ptUnsureItems = [];
+    quizState.ptWrongItems = [];
+    quizState.ptChooseTotal = 0;
+    quizState.ptAnswerShown = false;
+
+    ptLessonScreen.style.display = 'none';
+    ptScreen.style.display = 'flex';
+    renderPTItem();
+  }
+
+  function renderPTItem() {
+    const item = quizState.ptItems[quizState.ptIndex];
+    ptProgressEl.textContent = `${quizState.ptIndex + 1} / ${quizState.ptItems.length}`;
+    quizState.ptAnswerShown = false;
+
+    // reset all action buttons
+    ptSpeakBtn.style.display = 'none';
+    ptRevealBtn.style.display = 'none';
+    ptKnewBtn.style.display = 'none';
+    ptUnsureBtn.style.display = 'none';
+    ptNextBtn.style.display = 'none';
+
+    if (quizState.ptPhase === 'learn') {
+      ptPhaseLabel.textContent = '📖 Học';
+      ptCardSection.style.display = 'flex';
+      ptChooseSection.style.display = 'none';
+      ptCharacter.textContent = item.kana;
+      ptReading.textContent = item.romaji;
+      ptReading.style.display = 'none';
+      if (window.speechSynthesis) ptSpeakBtn.style.display = 'inline-block';
+      ptRevealBtn.textContent = 'Xem cách đọc';
+      ptRevealBtn.style.display = 'inline-block';
+      ptNextBtn.style.display = 'inline-block';
+      setTimeout(() => speakJapanese(item.kana), 300);
+
+    } else if (quizState.ptPhase === 'practice') {
+      ptPhaseLabel.textContent = '✏️ Luyện — Nhìn & Đọc';
+      ptCardSection.style.display = 'flex';
+      ptChooseSection.style.display = 'none';
+      ptCharacter.textContent = item.kana;
+      ptReading.textContent = item.romaji;
+      ptReading.style.display = 'none';
+      ptRevealBtn.textContent = 'Nghe & Xem đáp án';
+      ptRevealBtn.style.display = 'inline-block';
+
+    } else if (quizState.ptPhase === 'choose') {
+      ptPhaseLabel.textContent = '🎧 Luyện — Nghe & Chọn';
+      ptCardSection.style.display = 'none';
+      ptChooseSection.style.display = 'flex';
+      renderChooseOptions(item);
+      setTimeout(() => speakJapanese(item.kana), 300);
+    }
+  }
+
+  function renderChooseOptions(item) {
+    const pool = QUIZ_TYPE_CONFIG[quizState.quizType].data;
+    const options = [item.kana];
+    let attempts = 0;
+    while (options.length < 4 && attempts < pool.length * 4) {
+      const rand = pool[getRandomInt(pool.length)].kana;
+      if (!options.includes(rand)) options.push(rand);
+      attempts++;
+    }
+    shuffle(options);
+
+    ptChoiceOptionsContainer.innerHTML = '';
+    options.forEach(kana => {
+      const btn = document.createElement('button');
+      btn.className = 'pt-choice-btn';
+      btn.textContent = kana;
+      btn.addEventListener('click', () => handleChooseAnswer(kana, btn, item));
+      ptChoiceOptionsContainer.appendChild(btn);
+    });
+  }
+
+  function handleChooseAnswer(selected, btn, item) {
+    ptChoiceOptionsContainer.querySelectorAll('.pt-choice-btn').forEach(b => { b.disabled = true; });
+    const correct = selected === item.kana;
+    if (correct) {
+      btn.classList.add('correct');
+    } else {
+      btn.classList.add('wrong');
+      ptChoiceOptionsContainer.querySelectorAll('.pt-choice-btn').forEach(b => {
+        if (b.textContent === item.kana) b.classList.add('correct');
+      });
+      if (!quizState.ptWrongItems.find(i => i.kana === item.kana)) {
+        quizState.ptWrongItems.push(item);
+      }
+    }
+    speakJapanese(item.kana);
+    setTimeout(advancePT, 900);
+  }
+
+  function advancePT() {
+    quizState.ptIndex++;
+    if (quizState.ptIndex < quizState.ptItems.length) {
+      renderPTItem();
+      return;
+    }
+    // Phase exhausted — decide next step
+    if (quizState.ptPhase === 'learn') {
+      quizState.ptPhase = 'practice';
+      quizState.ptItems = shuffle(quizState.ptLearnItems.slice());
+      quizState.ptIndex = 0;
+      renderPTItem();
+    } else if (quizState.ptPhase === 'practice') {
+      if (quizState.ptUnsureItems.length > 0) {
+        quizState.ptPhase = 'choose';
+        quizState.ptChooseTotal = quizState.ptUnsureItems.length;
+        quizState.ptItems = shuffle(quizState.ptUnsureItems.slice());
+        quizState.ptIndex = 0;
+        renderPTItem();
+      } else {
+        showPTSummary();
+      }
+    } else if (quizState.ptPhase === 'choose') {
+      showPTSummary();
+    }
+  }
+
+  function showPTSummary() {
+    ptScreen.style.display = 'none';
+    const unsureCount = quizState.ptUnsureItems.length;
+    const wrongCount = quizState.ptWrongItems.length;
+
+    if (wrongCount === 0 && unsureCount === 0) {
+      ptSummaryTitle.textContent = 'Hoàn thành!';
+      ptSummaryContent.innerHTML = '<p class="pt-summary-perfect">Xuất sắc! Bạn đã nhớ hết ký tự. 🎉</p>';
+    } else if (wrongCount === 0) {
+      ptSummaryTitle.textContent = 'Hoàn thành!';
+      ptSummaryContent.innerHTML = `<p class="pt-summary-perfect">Tốt lắm! Đã ôn xong ${quizState.ptChooseTotal} ký tự cần luyện. 👍</p>`;
+    } else {
+      ptSummaryTitle.textContent = 'Kết Quả';
+      ptSummaryContent.innerHTML = `<p>Còn <span class="pt-count-wrong">${wrongCount}</span> ký tự cần ôn thêm.</p>`;
+    }
+
+    ptRetryBtn.style.display = wrongCount > 0 ? 'inline-block' : 'none';
+    ptSummaryScreen.style.display = 'flex';
+  }
+
+  // PT event listeners
+  ptBtn.addEventListener('click', () => {
+    modeSelectionScreen.style.display = 'none';
+    ptTypeScreen.style.display = 'flex';
+    clearSession();
+  });
+
+  backFromPTTypeBtn.addEventListener('click', () => {
+    ptTypeScreen.style.display = 'none';
+    modeSelectionScreen.style.display = 'flex';
+  });
+
+  ptTypeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      quizState.quizType = btn.getAttribute('data-type');
+      ptTypeScreen.style.display = 'none';
+      renderPTLessons();
+      ptLessonScreen.style.display = 'flex';
+    });
+  });
+
+  backFromPTLessonBtn.addEventListener('click', () => {
+    ptLessonScreen.style.display = 'none';
+    ptTypeScreen.style.display = 'flex';
+  });
+
+  ptSpeakBtn.addEventListener('click', () => {
+    speakJapanese(quizState.ptItems[quizState.ptIndex].kana);
+  });
+
+  ptRevealBtn.addEventListener('click', () => {
+    const item = quizState.ptItems[quizState.ptIndex];
+    ptReading.style.display = 'block';
+    quizState.ptAnswerShown = true;
+    speakJapanese(item.kana);
+    if (quizState.ptPhase === 'practice') {
+      ptRevealBtn.style.display = 'none';
+      ptKnewBtn.style.display = 'inline-block';
+      ptUnsureBtn.style.display = 'inline-block';
+    }
+    // for 'learn', ptNextBtn already visible
+  });
+
+  ptKnewBtn.addEventListener('click', advancePT);
+
+  ptUnsureBtn.addEventListener('click', () => {
+    const item = quizState.ptItems[quizState.ptIndex];
+    if (!quizState.ptUnsureItems.find(i => i.kana === item.kana)) {
+      quizState.ptUnsureItems.push(item);
+    }
+    advancePT();
+  });
+
+  ptNextBtn.addEventListener('click', advancePT);
+
+  ptExitBtn.addEventListener('click', () => {
+    ptScreen.style.display = 'none';
+    quizState.ptPhase = null;
+    quizState.ptItems = [];
+    quizState.ptIndex = 0;
+    quizState.ptUnsureItems = [];
+    quizState.ptWrongItems = [];
+    renderPTLessons();
+    ptLessonScreen.style.display = 'flex';
+  });
+
+  ptRetryBtn.addEventListener('click', () => {
+    ptSummaryScreen.style.display = 'none';
+    quizState.ptPhase = 'choose';
+    quizState.ptChooseTotal = quizState.ptWrongItems.length;
+    quizState.ptItems = shuffle(quizState.ptWrongItems.slice());
+    quizState.ptWrongItems = [];
+    quizState.ptIndex = 0;
+    ptScreen.style.display = 'flex';
+    renderPTItem();
+  });
+
+  ptNextLessonBtn.addEventListener('click', () => {
+    ptSummaryScreen.style.display = 'none';
+    renderPTLessons();
+    ptLessonScreen.style.display = 'flex';
+  });
+
+  ptPTHomeBtn.addEventListener('click', () => {
+    ptSummaryScreen.style.display = 'none';
+    quizState.quizType = null;
+    modeSelectionScreen.style.display = 'flex';
+    clearSession();
+  });
+
   // Hide all screens, then restore session or show home
   progressScreen.style.display = 'none';
   quizTypeScreen.style.display = 'none';
@@ -895,6 +1230,10 @@ document.addEventListener('DOMContentLoaded', () => {
   settingsScreen.style.display = 'none';
   mainQuiz.style.display = 'none';
   flashcardScreen.style.display = 'none';
+  ptTypeScreen.style.display = 'none';
+  ptLessonScreen.style.display = 'none';
+  ptScreen.style.display = 'none';
+  ptSummaryScreen.style.display = 'none';
   modeSelectionScreen.style.display = 'none';
   reviewBtn.style.display = 'none';
   reviewAllBtn.style.display = 'none';

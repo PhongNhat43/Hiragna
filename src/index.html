@@ -15,6 +15,7 @@
       <button id="weak-review-btn">Ôn Điểm Yếu</button>
     </div>
     <button id="view-progress-btn">Xem Tiến Trình</button>
+    <button id="pt-btn">Luyện Phát Âm</button>
   </div>
   <div id="progress-screen" class="quiz-container" style="display: none;">
     <h2>Tiến Trình Học</h2>
@@ -46,6 +47,52 @@
     <button id="start-mixed-btn" disabled>Bắt Đầu</button>
     <button id="back-from-mix-type-btn" class="back-btn">← Quay Lại</button>
   </div>
+  <!-- Pronunciation Trainer screens -->
+  <div id="pt-type-screen" class="quiz-container" style="display: none;">
+    <h2>Luyện Phát Âm</h2>
+    <p class="pt-subtitle">Chọn bảng chữ để bắt đầu</p>
+    <div class="pt-type-options">
+      <button class="pt-type-btn" data-type="hiragana">Hiragana<span class="pt-type-sub">あいうえお</span></button>
+      <button class="pt-type-btn" data-type="katakana">Katakana<span class="pt-type-sub">アイウエオ</span></button>
+    </div>
+    <button id="back-from-pt-type-btn" class="back-btn">← Quay Lại</button>
+  </div>
+  <div id="pt-lesson-screen" class="quiz-container" style="display: none;">
+    <h2 id="pt-lesson-title">Chọn Bài</h2>
+    <p class="pt-subtitle">Mỗi bài gồm 5 ký tự · Học → Luyện → Ôn</p>
+    <div id="pt-lesson-buttons"></div>
+    <button id="back-from-pt-lesson-btn" class="back-btn">← Quay Lại</button>
+  </div>
+  <div id="pt-screen" class="quiz-container" style="display: none;">
+    <div id="pt-phase-label"></div>
+    <div id="pt-progress"></div>
+    <div id="pt-card-section">
+      <div id="pt-character"></div>
+      <div id="pt-reading" style="display: none;"></div>
+    </div>
+    <div id="pt-choose-section" style="display: none;">
+      <div id="pt-listen-indicator">🔊</div>
+      <div id="pt-choice-options"></div>
+    </div>
+    <div id="pt-actions">
+      <button id="pt-speak-btn" style="display: none;">▶ Nghe lại</button>
+      <button id="pt-reveal-btn" style="display: none;">Nghe &amp; Xem đáp án</button>
+      <button id="pt-knew-btn" style="display: none;">Biết rồi ✓</button>
+      <button id="pt-unsure-btn" style="display: none;">Chưa chắc ?</button>
+      <button id="pt-next-btn" style="display: none;">Tiếp →</button>
+    </div>
+    <button id="pt-exit-btn" class="back-btn">← Thoát</button>
+  </div>
+  <div id="pt-summary-screen" class="quiz-container" style="display: none;">
+    <h2 id="pt-summary-title">Kết Quả</h2>
+    <div id="pt-summary-content"></div>
+    <div id="pt-summary-actions">
+      <button id="pt-retry-btn" style="display: none;">Ôn lại →</button>
+      <button id="pt-next-lesson-btn">Chọn bài khác</button>
+      <button id="pt-pt-home-btn">Về Trang Chủ</button>
+    </div>
+  </div>
+  <!-- End Pronunciation Trainer screens -->
   <div id="difficulty-screen" class="quiz-container" style="display: none;">
     <h2>Chọn Độ Khó</h2>
     <div id="difficulty-buttons">

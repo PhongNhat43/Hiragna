@@ -8,9 +8,10 @@ Feature mới: $ARGUMENTS
 
 Workflow bắt buộc — chưa code cho đến khi plan được duyệt:
 
-**Bước 1 — Đọc tài liệu:**
+**Bước 1 — Đọc tài liệu + phân tích impact:**
 - `CLAUDE.md`
 - Các tài liệu liên quan trực tiếp đến task (`docs/ai/core/`, `docs/ai/product/`)
+- Nếu Grapuco đã index: dùng `get_impact_analysis`, `get_dependencies`, `get_data_flows` để xác định impacted files/flows trước khi lên plan. Đối chiếu code thật nếu cần.
 
 **Bước 2 — Phân loại task size** theo `.claude/rules/task-sizing.md`.
 

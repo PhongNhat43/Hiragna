@@ -11,7 +11,16 @@
       "WebSearch",
       "Bash(python3 -m http.server 5500)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5500/src/)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "mcp__grapuco__list_repositories",
+      "mcp__grapuco__get_impact_analysis",
+      "mcp__grapuco__search_code",
+      "mcp__grapuco__get_architecture",
+      "mcp__grapuco__get_data_flows",
+      "Bash(python3 -c ':*)",
+      "mcp__grapuco__get_dependencies"
     ]
   }
 }

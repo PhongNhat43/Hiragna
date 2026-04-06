@@ -14,6 +14,7 @@ Không sửa code ngay. Diagnosis và implement là hai bước tách biệt.
 
 **Bước 2 — Chẩn đoán có bằng chứng:**
 - Đọc code liên quan, trace flow từng bước
+- Nếu Grapuco đã index và bug liên quan đến cross-file flow / dependency: dùng `get_data_flows`, `get_dependencies`, `get_impact_analysis` để hỗ trợ trace. Đối chiếu code thật trước khi kết luận.
 - Không đoán sớm — xác nhận bằng code trace hoặc logic analysis
 - Kết luận root cause kèm **bằng chứng mạnh nhất**
 

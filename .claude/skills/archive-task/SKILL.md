@@ -40,6 +40,7 @@ Phân tích task để xác định docs nào cần sync. Kiểm tra từng file
 | `docs/ai/history/changelog.md` | Mọi task — bắt buộc khi archive |
 | `docs/ai/history/decisions.md` | Task có quyết định thiết kế đáng ghi lại |
 | `CLAUDE.md` | Task thay đổi workflow cốt lõi, skills hiện có, rules vận hành, hoặc entry points AI cần biết |
+| `MEMORY.md` | Task có feedback về cách làm việc, preferences mới, hoặc thông tin về người dùng đáng nhớ xuyên session |
 
 Với mỗi file: nêu rõ **cần update / không cần / lý do**.
 

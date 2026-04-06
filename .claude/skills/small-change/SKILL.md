@@ -24,3 +24,4 @@ Ràng buộc:
 - Không sửa ngoài phạm vi yêu cầu
 - Nếu scope phình ra → đề xuất nâng thành task vừa/lớn và dùng `/big-feature`
 - Nếu phát sinh bug khi verify → dùng `/diagnose-bug`
+- Grapuco: chỉ dùng khi cần xác định blast radius hoặc shared dependency; không bắt buộc

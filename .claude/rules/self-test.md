@@ -1,5 +1,24 @@
 # Self-Test Rules
 
+## Nguyên tắc Verification-before-completion
+
+**Không được claim "xong", "đã ổn", "đã pass" nếu không có bằng chứng phù hợp.**
+
+Bằng chứng được chấp nhận tùy trạng thái workflow:
+- **Runtime verify chưa bật:** bằng chứng = code trace rõ ràng + logic analysis cụ thể trong self-review
+- **Runtime verify đã bật:** bằng chứng = output lệnh thật được đọc và trích dẫn
+
+Không được claim dựa trên:
+- Cảm giác ("tôi nghĩ nó đúng")
+- Suy đoán chưa trace code ("logic có vẻ ổn")
+- Self-review bỏ qua check nào đó
+
+Mọi claim phải đi kèm phát biểu rõ:
+- **Đã verify bằng cách nào** (trace dòng nào, file nào)
+- **Còn lại phần nào chờ người dùng manual verify**
+
+---
+
 ## Hai loại kiểm tra
 
 ### Self-review
@@ -7,6 +26,8 @@ Rà soát tĩnh bằng phân tích — không chạy app:
 - Đọc code, trace logic, kiểm tra flow trên file
 - Xác nhận đúng scope, không regression rõ ràng
 - Kiểm tra stale reference trong docs
+
+Mỗi check phải có bằng chứng kèm theo — không được chỉ đánh dấu ✅ mà không trace.
 
 **Luôn bắt buộc.** Phải thực hiện trước runtime verify.
 
@@ -85,11 +106,17 @@ Implement xong
 
 Bắt buộc có 2 mục:
 
-**Self-review:**
+**Self-review** — mỗi check phải ghi rõ bằng chứng:
 ```
 ## Kết quả self-review
-- [x] <check> — pass
-- [ ] <check> — fail: <mô tả>
+- [x] <check> — pass: <bằng chứng ngắn gọn, vd: "trace quiz.js:517, guard đúng">
+- [ ] <check> — fail: <mô tả cụ thể>
+```
+
+**Claim trạng thái** — bắt buộc ghi rõ ranh giới đã verify và chưa verify:
+```
+Đã verify (self-review): <liệt kê ngắn>
+Chờ người dùng verify: <liệt kê manual verify steps>
 ```
 
 **Runtime verify** _(bỏ qua cho đến khi kích hoạt lại — không cần ghi mục này vào result.md)_

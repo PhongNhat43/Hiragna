@@ -565,3 +565,303 @@ body {
   color: #818cf8;
   cursor: not-allowed;
 }
+
+/* ===== Pronunciation Trainer ===== */
+#pt-btn {
+  margin-top: 10px;
+  padding: 14px 32px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 10px;
+  background: #fdf4ff;
+  color: #7e22ce;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s, color 0.2s;
+}
+#pt-btn:hover {
+  background: #e9d5ff;
+}
+.pt-subtitle {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin: 4px 0 20px 0;
+  text-align: center;
+}
+.pt-type-options {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.pt-type-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 28px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: 2px solid #e9d5ff;
+  border-radius: 12px;
+  background: #fdf4ff;
+  color: #7e22ce;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  gap: 6px;
+}
+.pt-type-btn:hover {
+  background: #e9d5ff;
+  border-color: #a855f7;
+}
+.pt-type-sub {
+  font-size: 1.4rem;
+  font-weight: normal;
+  color: #6b7280;
+  letter-spacing: 2px;
+}
+#pt-lesson-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+.pt-lesson-btn {
+  padding: 16px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: left;
+  border: 2px solid #e9d5ff;
+  border-radius: 10px;
+  background: #fdf4ff;
+  color: #7e22ce;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.pt-lesson-btn:hover {
+  background: #e9d5ff;
+  border-color: #a855f7;
+}
+/* pt-screen */
+#pt-screen {
+  min-height: 420px;
+}
+#pt-phase-label {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #7e22ce;
+  background: #f3e8ff;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  align-self: flex-start;
+}
+#pt-progress {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  margin-bottom: 20px;
+  align-self: flex-end;
+}
+#pt-card-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+#pt-character {
+  font-size: 5rem;
+  color: #1e1e2e;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+#pt-reading {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #7e22ce;
+  letter-spacing: 2px;
+}
+/* Choose section */
+#pt-choose-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+  margin-bottom: 24px;
+  gap: 20px;
+}
+#pt-listen-indicator {
+  font-size: 3.5rem;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.9); }
+}
+#pt-choice-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+}
+.pt-choice-btn {
+  padding: 20px 0;
+  font-size: 2rem;
+  border: 2px solid #e9d5ff;
+  border-radius: 10px;
+  background: #fdf4ff;
+  color: #1e1e2e;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.pt-choice-btn:hover:not(:disabled) {
+  background: #e9d5ff;
+  border-color: #a855f7;
+}
+.pt-choice-btn:disabled {
+  cursor: default;
+}
+.pt-choice-btn.correct {
+  background: #bbf7d0;
+  border-color: #16a34a;
+  color: #15803d;
+}
+.pt-choice-btn.wrong {
+  background: #fecaca;
+  border-color: #dc2626;
+  color: #dc2626;
+}
+/* pt-actions */
+#pt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+#pt-speak-btn {
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  background: #f3e8ff;
+  color: #7e22ce;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#pt-speak-btn:hover { background: #e9d5ff; }
+#pt-reveal-btn {
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  background: #7e22ce;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#pt-reveal-btn:hover { background: #6b21a8; }
+#pt-knew-btn {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  background: #bbf7d0;
+  color: #15803d;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#pt-knew-btn:hover { background: #86efac; }
+#pt-unsure-btn {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  background: #fed7aa;
+  color: #c2410c;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#pt-unsure-btn:hover { background: #fdba74; }
+#pt-next-btn {
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  background: #7e22ce;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#pt-next-btn:hover { background: #6b21a8; }
+/* Summary */
+#pt-summary-screen {
+  min-height: 320px;
+}
+#pt-summary-content {
+  width: 100%;
+  text-align: center;
+  margin: 16px 0 24px 0;
+  font-size: 1rem;
+  color: #374151;
+  line-height: 1.8;
+}
+.pt-summary-perfect {
+  font-size: 1.1rem;
+  color: #15803d;
+  font-weight: bold;
+}
+.pt-count-wrong {
+  color: #dc2626;
+  font-weight: bold;
+}
+#pt-summary-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  align-items: center;
+}
+#pt-retry-btn {
+  padding: 12px 32px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  background: #7e22ce;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
+}
+#pt-retry-btn:hover { background: #6b21a8; }
+#pt-next-lesson-btn {
+  padding: 10px 24px;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  background: #f3e8ff;
+  color: #7e22ce;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+  width: 100%;
+}
+#pt-next-lesson-btn:hover { background: #e9d5ff; }
+#pt-pt-home-btn {
+  padding: 10px 24px;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  background: #e0e7ff;
+  color: #3730a3;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
+}
+#pt-pt-home-btn:hover { background: #c7d2fe; }

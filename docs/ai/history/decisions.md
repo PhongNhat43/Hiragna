@@ -91,6 +91,14 @@ Tách biệt để không phá vỡ Review Mistakes logic hiện tại.
 
 ---
 
+## [2026-04-04] Sequential pick thay vì pure random trong generateQuestion()
+
+**Quyết định:** `generateQuestion()` dùng `questionCount % dataSet.length` để chọn câu hỏi thay vì `getRandomInt(dataSet.length)`. Dataset được shuffle một lần tại `startQuizBtn` trước khi quiz bắt đầu.
+
+**Lý do:** Pure random gây lặp câu hỏi trong cùng session — đặc biệt tệ với dataset nhỏ (weak review 5 items / 10 câu). Sequential pick đảm bảo mỗi item được hỏi một lần trước khi lặp lại. Pre-shuffle giữ nguyên tính ngẫu nhiên. `startWeakReview()` đã shuffle sẵn nên không cần thay đổi.
+
+---
+
 ## [2026-03-30] Single quizState object pattern
 
 **Quyết định:** Toàn bộ state quiz sống trong một object `quizState` duy nhất.

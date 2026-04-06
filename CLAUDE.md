@@ -46,7 +46,12 @@ Trước khi nhận yêu cầu, kiểm tra `docs/ai/tasks/active/`:
 
 Templates: `docs/ai/templates/task-record-template.md`, `plan-record-template.md`, `result-record-template.md`
 
-Skills: `/small-change`, `/big-feature`, `/diagnose-bug`, `/docs-sync`, `/archive-task`
+Skills: `/small-change`, `/big-feature`, `/diagnose-bug`, `/fix-bug`, `/docs-sync`, `/archive-task`, `/project-audit`
+
+### Grapuco (code graph)
+
+Nếu repo đã được Grapuco index, dùng để hỗ trợ phân tích cấu trúc, dependency, impact, data flow.
+Không bắt buộc cho mọi task. Chi tiết: `.claude/rules/global.md` → mục Grapuco.
 
 ### Thay đổi tối thiểu
 

@@ -60,6 +60,7 @@ Group buttons được render động theo quiz type đã chọn.
 - Answer highlighting: đúng = xanh, sai = đỏ + hiển thị đáp án đúng màu xanh
 - Skip button: bỏ qua, không tính điểm
 - Next button: chỉ hiển thị khi autoAdvance = Off
+- Không lặp câu hỏi trong cùng một session — dataset được shuffle khi bắt đầu, câu hỏi được chọn tuần tự
 
 ## Quiz Mode — Sau Quiz
 
