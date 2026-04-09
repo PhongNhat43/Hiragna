@@ -939,3 +939,256 @@ body {
   from { opacity: 1; }
   to   { opacity: 0.55; }
 }
+
+/* ========================
+   Number Trainer (NT)
+   ======================== */
+#nt-btn {
+  margin-top: 10px;
+  padding: 14px 32px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 10px;
+  background: #ccfbf1;
+  color: #0f766e;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s, color 0.2s;
+}
+#nt-btn:hover {
+  background: #99f6e4;
+}
+/* Lesson screen */
+.nt-subtitle {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin: 4px 0 20px 0;
+  text-align: center;
+}
+#nt-lesson-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+.nt-lesson-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 18px;
+  text-align: left;
+  border: 2px solid #99f6e4;
+  border-radius: 10px;
+  background: #f0fdfa;
+  color: #0f766e;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.nt-lesson-btn:hover {
+  background: #ccfbf1;
+  border-color: #0d9488;
+}
+.nt-lesson-name {
+  font-size: 1rem;
+  font-weight: bold;
+}
+.nt-lesson-hint {
+  font-size: 0.82rem;
+  color: #6b7280;
+  font-weight: normal;
+}
+/* nt-screen */
+#nt-screen {
+  min-height: 420px;
+}
+#nt-phase-label {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #0f766e;
+  background: #ccfbf1;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  align-self: flex-start;
+}
+#nt-progress {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  margin-bottom: 16px;
+  align-self: flex-end;
+}
+#nt-card-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+#nt-display {
+  font-size: 4.5rem;
+  font-weight: bold;
+  color: #1e1e2e;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+#nt-reading {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #0f766e;
+  letter-spacing: 2px;
+}
+#nt-composition {
+  font-size: 1rem;
+  color: #6b7280;
+  background: #f0fdfa;
+  border: 1px solid #99f6e4;
+  border-radius: 8px;
+  padding: 6px 16px;
+  letter-spacing: 1px;
+}
+/* Options */
+#nt-options-section {
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  margin-bottom: 16px;
+}
+#nt-choice-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+.nt-choice-btn {
+  padding: 16px 6px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: 2px solid #99f6e4;
+  border-radius: 10px;
+  background: #f0fdfa;
+  color: #1e1e2e;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.nt-choice-btn:hover:not(:disabled) {
+  background: #ccfbf1;
+  border-color: #0d9488;
+}
+.nt-choice-btn:disabled {
+  cursor: default;
+}
+.nt-choice-btn.correct {
+  background: #bbf7d0;
+  border-color: #16a34a;
+  color: #15803d;
+}
+.nt-choice-btn.wrong {
+  background: #fecaca;
+  border-color: #dc2626;
+  color: #dc2626;
+}
+/* Actions */
+#nt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+#nt-speak-btn {
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  background: #ccfbf1;
+  color: #0f766e;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#nt-speak-btn:hover { background: #99f6e4; }
+#nt-next-btn {
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  background: #0d9488;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#nt-next-btn:hover { background: #0f766e; }
+/* Summary */
+#nt-summary-screen {
+  min-height: 320px;
+}
+#nt-summary-content {
+  width: 100%;
+  text-align: center;
+  margin: 16px 0 24px 0;
+  font-size: 1rem;
+  color: #374151;
+  line-height: 1.8;
+}
+.nt-summary-perfect {
+  font-size: 1.1rem;
+  color: #15803d;
+  font-weight: bold;
+}
+.nt-summary-good {
+  font-size: 1.05rem;
+  color: #0f766e;
+  font-weight: bold;
+}
+.nt-count-wrong {
+  color: #dc2626;
+  font-weight: bold;
+}
+#nt-summary-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  align-items: center;
+}
+#nt-retry-btn {
+  padding: 12px 32px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  background: #0d9488;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
+}
+#nt-retry-btn:hover { background: #0f766e; }
+#nt-choose-lesson-btn {
+  padding: 10px 24px;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  background: #ccfbf1;
+  color: #0f766e;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+  width: 100%;
+}
+#nt-choose-lesson-btn:hover { background: #99f6e4; }
+#nt-home-btn {
+  padding: 10px 24px;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  background: #e0e7ff;
+  color: #3730a3;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
+}
+#nt-home-btn:hover { background: #c7d2fe; }

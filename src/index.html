@@ -16,6 +16,7 @@
     </div>
     <button id="view-progress-btn">Xem Tiến Trình</button>
     <button id="pt-btn">Luyện Phát Âm</button>
+    <button id="nt-btn">Luyện Số</button>
   </div>
   <div id="progress-screen" class="quiz-container" style="display: none;">
     <h2>Tiến Trình Học</h2>
@@ -93,6 +94,42 @@
     </div>
   </div>
   <!-- End Pronunciation Trainer screens -->
+
+  <!-- Number Trainer screens -->
+  <div id="nt-lesson-screen" class="quiz-container" style="display: none;">
+    <h2>Luyện Số Tiếng Nhật</h2>
+    <p class="nt-subtitle">Chọn bài để bắt đầu · Học → Luyện → Đảo → Ôn</p>
+    <div id="nt-lesson-buttons"></div>
+    <button id="back-from-nt-lesson-btn" class="back-btn">← Quay Lại</button>
+  </div>
+  <div id="nt-screen" class="quiz-container" style="display: none;">
+    <div id="nt-phase-label"></div>
+    <div id="nt-progress"></div>
+    <div id="nt-card-section">
+      <div id="nt-display"></div>
+      <div id="nt-reading" style="display: none;"></div>
+      <div id="nt-composition" style="display: none;"></div>
+    </div>
+    <div id="nt-options-section" style="display: none;">
+      <div id="nt-choice-options"></div>
+    </div>
+    <div id="nt-actions">
+      <button id="nt-speak-btn" style="display: none;">▶ Nghe lại</button>
+      <button id="nt-next-btn" style="display: none;">Tiếp →</button>
+    </div>
+    <button id="nt-exit-btn" class="back-btn">← Thoát</button>
+  </div>
+  <div id="nt-summary-screen" class="quiz-container" style="display: none;">
+    <h2 id="nt-summary-title">Kết Quả</h2>
+    <div id="nt-summary-content"></div>
+    <div id="nt-summary-actions">
+      <button id="nt-retry-btn" style="display: none;">Ôn lại →</button>
+      <button id="nt-choose-lesson-btn">Chọn bài khác</button>
+      <button id="nt-home-btn">Về Trang Chủ</button>
+    </div>
+  </div>
+  <!-- End Number Trainer screens -->
+
   <div id="difficulty-screen" class="quiz-container" style="display: none;">
     <h2>Chọn Độ Khó</h2>
     <div id="difficulty-buttons">
@@ -210,6 +247,8 @@
   </div>
   <script src="hiraganaData.js"></script>
   <script src="progress.js"></script>
+  <script src="numberData.js"></script>
   <script src="quiz.js"></script>
+  <script src="numberTrainer.js"></script>
 </body>
 </html>
