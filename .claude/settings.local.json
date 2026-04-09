@@ -20,7 +20,10 @@
       "mcp__grapuco__get_architecture",
       "mcp__grapuco__get_data_flows",
       "Bash(python3 -c ':*)",
-      "mcp__grapuco__get_dependencies"
+      "mcp__grapuco__get_dependencies",
+      "Bash(node:*)",
+      "Bash(awk:*)",
+      "Bash(python3:*)"
     ]
   }
 }

@@ -40,7 +40,14 @@ const quizState = {
   ptWrongItems: [],    // items trả lời sai trong choose
   ptChooseTotal: 0,    // số items đưa vào choose phase (để tính kết quả)
   ptAnswerShown: false,
-  ptLessonKey: null    // e.g. 'basic_vowels'
+  ptLessonKey: null,   // e.g. 'basic_vowels'
+  recentItems: [],     // kana của 6 câu gần nhất, dùng cho recency penalty
+  // Scope screen
+  contentScope: 'basic_only', // key of CONTENT_SCOPE_CONFIG — kana only
+  timerMode: null,             // null (Off) | 'per_question'
+  timerSeconds: 10,            // fixed 10s in V1
+  timerRemaining: 0,           // runtime countdown
+  timerIntervalId: null        // runtime — not persisted
 };
 
 // Import QUIZ_TYPE_CONFIG from hiraganaData.js
@@ -59,9 +66,7 @@ function shuffle(array) {
 
 function generateQuestion() {
   const dataSet = quizState.questionSet;
-  // Sequential pick (dedup): cycle through shuffled array by questionCount
-  const correctIdx = quizState.questionCount % dataSet.length;
-  const correct = dataSet[correctIdx];
+  const correct = pickWeighted(dataSet, quizState.quizType, quizState.recentItems);
   const optionsPool = dataSet.length >= 4 ? dataSet : QUIZ_TYPE_CONFIG[quizState.quizType].data;
   let options = [correct.romaji];
   // Guard: max attempts to prevent infinite loop when unique romaji < 4
@@ -79,6 +84,59 @@ function generateQuestion() {
     options
   };
   quizState.isAnswered = false;
+}
+
+function pickWeighted(dataSet, type, recentItems) {
+  const now = Date.now();
+  const stats = loadItemStats();
+  const typeStats = (type !== 'mixed' && stats[type]) ? stats[type] : {};
+
+  const weights = dataSet.map(item => {
+    const s = typeStats[item.kana] || { correct: 0, wrong: 0, lastSeenTs: null, streak: 0 };
+    const total = s.correct + s.wrong;
+
+    // accuracy multiplier
+    let accuracyMult;
+    if (total === 0) {
+      accuracyMult = 1.5; // new item — chưa từng gặp
+    } else {
+      const acc = s.correct / total;
+      if (acc < 0.50)      accuracyMult = 3.0;
+      else if (acc < 0.70) accuracyMult = 2.0;
+      else if (acc < 0.85) accuracyMult = 1.0;
+      else if (acc < 0.95) accuracyMult = 0.4;
+      else                 accuracyMult = 0.15; // đã thành thạo, ôn duy trì
+    }
+
+    // recency multiplier (in-session)
+    const recentIdx = recentItems.indexOf(item.kana);
+    let recencyMult;
+    if (recentIdx >= 0 && recentIdx < 3) recencyMult = 0.05; // vừa gặp trong 3 câu gần
+    else if (recentIdx >= 3)             recencyMult = 0.3;  // gặp trong 4–6 câu gần
+    else                                 recencyMult = 1.0;
+
+    // absence multiplier (cross-session)
+    let absenceMult;
+    if (!s.lastSeenTs) {
+      absenceMult = 1.5; // chưa bao giờ gặp
+    } else {
+      const daysSince = (now - s.lastSeenTs) / 86400000;
+      if (daysSince > 14)     absenceMult = 1.6;
+      else if (daysSince > 7) absenceMult = 1.3;
+      else                    absenceMult = 1.0;
+    }
+
+    return Math.max(accuracyMult * recencyMult * absenceMult, 0.05);
+  });
+
+  // weighted random selection
+  const totalWeight = weights.reduce((a, b) => a + b, 0);
+  let rand = Math.random() * totalWeight;
+  for (let i = 0; i < dataSet.length; i++) {
+    rand -= weights[i];
+    if (rand <= 0) return dataSet[i];
+  }
+  return dataSet[dataSet.length - 1]; // floating-point safety fallback
 }
 
 function validateAnswer(selectedRomaji) {
@@ -176,6 +234,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const ptNextLessonBtn = document.getElementById('pt-next-lesson-btn');
   const ptPTHomeBtn = document.getElementById('pt-pt-home-btn');
 
+  // Scope screen DOM refs
+  const scopeScreen = document.getElementById('scope-screen');
+  const scopeContentSection = document.getElementById('scope-content-section');
+  const backFromScopeBtn = document.getElementById('back-from-scope-btn');
+  const confirmScopeBtn = document.getElementById('confirm-scope-btn');
+  const timerDisplay = document.getElementById('timer-display');
+
   const weakReviewBtn = document.getElementById('weak-review-btn');
   const progressScreen = document.getElementById('progress-screen');
   const progressContent = document.getElementById('progress-content');
@@ -183,6 +248,62 @@ document.addEventListener('DOMContentLoaded', () => {
   const resetProgressBtn = document.getElementById('reset-progress-btn');
   const resetWeakItemsBtn = document.getElementById('reset-weak-items-btn');
   const backFromProgressBtn = document.getElementById('back-from-progress-btn');
+
+  // ========================
+  // Timer helpers
+  // ========================
+  function clearTimer() {
+    if (quizState.timerIntervalId !== null) {
+      clearInterval(quizState.timerIntervalId);
+      quizState.timerIntervalId = null;
+    }
+    timerDisplay.style.display = 'none';
+    timerDisplay.classList.remove('timer-warning');
+  }
+
+  function startTimer() {
+    clearTimer();
+    if (quizState.timerMode !== 'per_question') return;
+    quizState.timerRemaining = quizState.timerSeconds;
+    timerDisplay.style.display = 'block';
+    timerDisplay.textContent = quizState.timerRemaining + 's';
+    timerDisplay.classList.remove('timer-warning');
+
+    quizState.timerIntervalId = setInterval(() => {
+      quizState.timerRemaining--;
+      timerDisplay.textContent = quizState.timerRemaining + 's';
+      if (quizState.timerRemaining <= 3) {
+        timerDisplay.classList.add('timer-warning');
+      }
+      if (quizState.timerRemaining <= 0) {
+        // Timeout = same code path as skip
+        clearTimer();
+        if (quizState.isAnswered) return;
+        quizState.isAnswered = true;
+        quizState.incorrectAnswers.push({
+          kana: quizState.currentQuestion.kana,
+          correctRomaji: quizState.currentQuestion.correctRomaji,
+          userAnswer: null
+        });
+        quizState.questionHistory.push({
+          kana: quizState.currentQuestion.kana,
+          correctRomaji: quizState.currentQuestion.correctRomaji,
+          userAnswer: null,
+          isCorrect: false
+        });
+        if (quizState.quizType !== 'mixed') {
+          addToWeakItem(quizState.quizType, quizState.currentQuestion.kana);
+        }
+        updateItemStat(quizState.quizType, quizState.currentQuestion.kana, false);
+        quizState.recentItems.unshift(quizState.currentQuestion.kana);
+        if (quizState.recentItems.length > 6) quizState.recentItems.pop();
+        disableOptions();
+        setTimeout(() => {
+          if (quizState.questionSet !== null) advanceToNextQuestion();
+        }, quizState.feedbackDelay);
+      }
+    }, 1000);
+  }
 
   // Progress tracking
   function saveQuizProgress() {
@@ -319,9 +440,14 @@ document.addEventListener('DOMContentLoaded', () => {
         groupFilterScreen.style.display = 'flex';
         saveSession({ screen: 'group-filter-screen', mode: quizState.mode, quizType: type });
       } else {
+        // quiz mode → scope-screen (replaces difficulty + group-filter for kana/kanji)
+        quizState.contentScope = 'basic_only';
+        quizState.totalQuestions = 10;
+        quizState.timerMode = null;
         quizTypeScreen.style.display = 'none';
-        difficultyScreen.style.display = 'flex';
-        saveSession({ screen: 'difficulty-screen', mode: quizState.mode, quizType: type });
+        initScopeScreen();
+        scopeScreen.style.display = 'flex';
+        saveSession({ screen: 'scope-screen', mode: quizState.mode, quizType: type, totalQuestions: 10, contentScope: 'basic_only', timerMode: null });
       }
     });
   });
@@ -378,6 +504,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function initScopeScreen() {
+    // Content section: show for kana types and mixed
+    const showContent = quizState.quizType === 'hiragana'
+                     || quizState.quizType === 'katakana'
+                     || quizState.quizType === 'mixed';
+    scopeContentSection.style.display = showContent ? '' : 'none';
+
+    // Sync active state for content scope buttons
+    document.querySelectorAll('#scope-content-options .scope-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-scope') === quizState.contentScope);
+    });
+
+    // Sync active state for question count buttons
+    document.querySelectorAll('.scope-btn[data-questions]').forEach(btn => {
+      btn.classList.toggle('active', Number(btn.getAttribute('data-questions')) === quizState.totalQuestions);
+    });
+
+    // Sync active state for timer buttons
+    document.querySelectorAll('.scope-btn[data-timer]').forEach(btn => {
+      const isOff = btn.getAttribute('data-timer') === 'off';
+      btn.classList.toggle('active', isOff ? quizState.timerMode === null : quizState.timerMode === btn.getAttribute('data-timer'));
+    });
+  }
+
   function restoreSession() {
     try {
       const session = loadSession();
@@ -409,6 +559,21 @@ document.addEventListener('DOMContentLoaded', () => {
           }
           difficultyScreen.style.display = 'flex';
           break;
+        case 'scope-screen':
+          quizState.mode = session.mode;
+          quizState.quizType = session.quizType;
+          if (session.quizType === 'mixed') {
+            quizState.mixedTypes = session.mixedTypes || [];
+            quizState.questionSet = quizState.mixedTypes.flatMap(t => QUIZ_TYPE_CONFIG[t].data);
+          } else {
+            quizState.questionSet = QUIZ_TYPE_CONFIG[session.quizType].data;
+          }
+          quizState.contentScope = session.contentScope || 'basic_only';
+          quizState.totalQuestions = session.totalQuestions || 10;
+          quizState.timerMode = session.timerMode || null;
+          initScopeScreen();
+          scopeScreen.style.display = 'flex';
+          break;
         case 'group-filter-screen':
           quizState.mode = session.mode;
           quizState.quizType = session.quizType;
@@ -430,12 +595,15 @@ document.addEventListener('DOMContentLoaded', () => {
             quizState.questionSet = QUIZ_TYPE_CONFIG[session.quizType].data;
           }
           quizState.difficulty = session.difficulty;
-          quizState.totalQuestions = session.totalQuestions;
-          quizState.selectedGroup = session.selectedGroup;
-          quizState.autoAdvance = session.autoAdvance;
-          quizState.feedbackDelay = session.feedbackDelay;
-          quizState.reviewEnabled = session.reviewEnabled;
-          if (session.quizType !== 'mixed') renderGroupButtons();
+          quizState.totalQuestions = session.totalQuestions || 10;
+          quizState.selectedGroup = session.selectedGroup || 'all';
+          quizState.autoAdvance = session.autoAdvance !== undefined ? session.autoAdvance : true;
+          quizState.feedbackDelay = session.feedbackDelay || 800;
+          quizState.reviewEnabled = session.reviewEnabled !== undefined ? session.reviewEnabled : true;
+          quizState.contentScope = session.contentScope || 'basic_only';
+          quizState.timerMode = session.timerMode || null;
+          // Only render group buttons for flashcard mode (quiz mode uses scope-screen)
+          if (session.quizType !== 'mixed' && quizState.mode === 'flashcard') renderGroupButtons();
           applySettingsButtons();
           settingsScreen.style.display = 'flex';
           break;
@@ -463,12 +631,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   backToGroupBtn.addEventListener('click', () => {
     settingsScreen.style.display = 'none';
-    if (quizState.quizType === 'mixed') {
-      difficultyScreen.style.display = 'flex';
-      saveSession({ screen: 'difficulty-screen', mode: quizState.mode, quizType: 'mixed', mixedTypes: quizState.mixedTypes });
-    } else {
+    if (quizState.mode === 'flashcard') {
+      // flashcard: settings back → group-filter (unchanged)
       groupFilterScreen.style.display = 'flex';
-      saveSession({ screen: 'group-filter-screen', mode: quizState.mode, quizType: quizState.quizType, difficulty: quizState.difficulty, totalQuestions: quizState.totalQuestions });
+      saveSession({ screen: 'group-filter-screen', mode: quizState.mode, quizType: quizState.quizType });
+    } else {
+      // quiz mode: settings back → scope-screen
+      initScopeScreen();
+      scopeScreen.style.display = 'flex';
+      saveSession({ screen: 'scope-screen', mode: quizState.mode, quizType: quizState.quizType, mixedTypes: quizState.mixedTypes, totalQuestions: quizState.totalQuestions, contentScope: quizState.contentScope, timerMode: quizState.timerMode, autoAdvance: quizState.autoAdvance, feedbackDelay: quizState.feedbackDelay, reviewEnabled: quizState.reviewEnabled });
     }
   });
 
@@ -480,6 +651,54 @@ document.addEventListener('DOMContentLoaded', () => {
       settingsScreen.style.display = 'flex';
       saveSession({ screen: 'settings-screen', mode: quizState.mode, quizType: quizState.quizType, difficulty: quizState.difficulty, totalQuestions: quizState.totalQuestions, selectedGroup: quizState.selectedGroup, autoAdvance: quizState.autoAdvance, feedbackDelay: quizState.feedbackDelay, reviewEnabled: quizState.reviewEnabled });
     }
+  });
+
+  // Scope screen button listeners (content / questions / timer)
+  document.querySelectorAll('#scope-content-options .scope-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      quizState.contentScope = btn.getAttribute('data-scope');
+      document.querySelectorAll('#scope-content-options .scope-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.scope-btn[data-questions]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      quizState.totalQuestions = Number(btn.getAttribute('data-questions'));
+      document.querySelectorAll('.scope-btn[data-questions]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.scope-btn[data-timer]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const val = btn.getAttribute('data-timer');
+      quizState.timerMode = val === 'off' ? null : val;
+      document.querySelectorAll('.scope-btn[data-timer]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  backFromScopeBtn.addEventListener('click', () => {
+    scopeScreen.style.display = 'none';
+    if (quizState.quizType === 'mixed') {
+      mixTypeCheckboxes.forEach(cb => { cb.checked = quizState.mixedTypes.includes(cb.value); });
+      startMixedBtn.disabled = quizState.mixedTypes.length < 2;
+      mixTypeScreen.style.display = 'flex';
+      saveSession({ screen: 'mix-type-screen', mode: quizState.mode, mixedTypes: quizState.mixedTypes });
+    } else {
+      quizState.quizType = null;
+      quizState.questionSet = null;
+      quizTypeScreen.style.display = 'flex';
+      saveSession({ screen: 'quiztype-screen', mode: quizState.mode });
+    }
+  });
+
+  confirmScopeBtn.addEventListener('click', () => {
+    scopeScreen.style.display = 'none';
+    applySettingsButtons();
+    settingsScreen.style.display = 'flex';
+    saveSession({ screen: 'settings-screen', mode: quizState.mode, quizType: quizState.quizType, mixedTypes: quizState.mixedTypes, totalQuestions: quizState.totalQuestions, contentScope: quizState.contentScope, timerMode: quizState.timerMode, autoAdvance: quizState.autoAdvance, feedbackDelay: quizState.feedbackDelay, reviewEnabled: quizState.reviewEnabled });
   });
 
   // Settings screen logic
@@ -499,15 +718,26 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   startQuizBtn.addEventListener('click', () => {
-    if (quizState.quizType !== 'mixed') {
-      const group = GROUP_CONFIG[quizState.quizType][quizState.selectedGroup];
+    const isKana = quizState.quizType === 'hiragana' || quizState.quizType === 'katakana';
+    if (isKana) {
+      // Use contentScope preset to filter
+      const scopeConfig = CONTENT_SCOPE_CONFIG[quizState.contentScope];
       const fullData = QUIZ_TYPE_CONFIG[quizState.quizType].data;
-      quizState.questionSet = group.filter === null
+      quizState.questionSet = scopeConfig.filter === null
         ? fullData
-        : fullData.filter(item => group.filter.includes(item.romaji));
+        : fullData.filter(item => scopeConfig.filter.includes(item.romaji));
+    } else if (quizState.quizType === 'kanji') {
+      // Kanji: full dataset (no content scope in V1)
+      quizState.questionSet = QUIZ_TYPE_CONFIG[quizState.quizType].data;
+    } else if (quizState.quizType === 'mixed') {
+      const scopeConfig = CONTENT_SCOPE_CONFIG[quizState.contentScope];
+      quizState.questionSet = quizState.mixedTypes.flatMap(type => {
+        const fullData = QUIZ_TYPE_CONFIG[type].data;
+        // Kanji romaji = meanings ("one","mountain",...) → never match kana filter → keep full
+        if (type === 'kanji' || scopeConfig.filter === null) return fullData;
+        return fullData.filter(item => scopeConfig.filter.includes(item.romaji));
+      });
     }
-    // Slice 3: shuffle copy for sequential dedup — không mutate original data
-    quizState.questionSet = shuffle(quizState.questionSet.slice());
     quizState.score = 0;
     quizState.questionCount = 0;
     quizState.isAnswered = false;
@@ -515,6 +745,7 @@ document.addEventListener('DOMContentLoaded', () => {
     quizState.incorrectAnswers = [];
     quizState.reviewIndex = 0;
     quizState.questionHistory = [];
+    quizState.recentItems = [];
     settingsScreen.style.display = 'none';
     mainQuiz.style.display = 'flex';
     saveSession({ screen: 'mode-selection-screen' });
@@ -559,10 +790,12 @@ document.addEventListener('DOMContentLoaded', () => {
     renderScore();
     renderProgress();
     quizState.quizComplete = false;
+    startTimer();
   }
 
   function handleAnswer(option, btn) {
     if (quizState.isAnswered) return;
+    clearTimer();
     const correct = validateAnswer(option);
     quizState.questionHistory.push({
       kana: quizState.currentQuestion.kana,
@@ -594,6 +827,9 @@ document.addEventListener('DOMContentLoaded', () => {
         addToWeakItem(quizState.quizType, quizState.currentQuestion.kana);
       }
     }
+    updateItemStat(quizState.quizType, quizState.currentQuestion.kana, correct);
+    quizState.recentItems.unshift(quizState.currentQuestion.kana);
+    if (quizState.recentItems.length > 6) quizState.recentItems.pop();
     renderScore();
     if (quizState.autoAdvance) {
       setTimeout(() => {
@@ -717,6 +953,7 @@ document.addEventListener('DOMContentLoaded', () => {
     quizState.incorrectAnswers = [];
     quizState.reviewIndex = 0;
     quizState.questionHistory = [];
+    quizState.recentItems = [];
     mainQuiz.style.display = 'flex';
     saveSession({ screen: 'mode-selection-screen' });
     reviewBtn.style.display = 'none';
@@ -825,6 +1062,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   skipBtn.addEventListener('click', () => {
     if (quizState.isAnswered) return;
+    clearTimer();
     quizState.isAnswered = true;
     quizState.incorrectAnswers.push({
       kana: quizState.currentQuestion.kana,
@@ -840,6 +1078,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (quizState.quizType !== 'mixed') {
       addToWeakItem(quizState.quizType, quizState.currentQuestion.kana);
     }
+    updateItemStat(quizState.quizType, quizState.currentQuestion.kana, false);
+    quizState.recentItems.unshift(quizState.currentQuestion.kana);
+    if (quizState.recentItems.length > 6) quizState.recentItems.pop();
     disableOptions();
     setTimeout(() => {
       if (quizState.questionSet !== null) advanceToNextQuestion();
@@ -855,6 +1096,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   restartBtn.addEventListener('click', () => {
+    clearTimer();
     mainQuiz.style.display = 'none';
     modeSelectionScreen.style.display = 'flex';
     clearSession();
@@ -875,11 +1117,16 @@ document.addEventListener('DOMContentLoaded', () => {
     quizState.reviewEnabled = true;
     quizState.selectedGroup = 'all';
     quizState.questionHistory = [];
+    quizState.recentItems = [];
+    quizState.contentScope = 'basic_only';
+    quizState.timerMode = null;
+    quizState.timerRemaining = 0;
     reviewBtn.style.display = 'none';
     reviewAllBtn.style.display = 'none';
     reviewArea.style.display = 'none';
     settingsScreen.style.display = 'none';
     groupFilterScreen.style.display = 'none';
+    scopeScreen.style.display = 'none';
   });
 
   viewProgressBtn.addEventListener('click', () => {
@@ -902,6 +1149,7 @@ document.addEventListener('DOMContentLoaded', () => {
   resetProgressBtn.addEventListener('click', () => {
     if (window.confirm('Xóa toàn bộ tiến trình? Không thể hoàn tác.')) {
       resetProgress();
+      resetItemStats();
       showProgressScreen();
     }
   });
@@ -938,8 +1186,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (quizState.mode === 'flashcard') {
       startFlashcard();
     } else {
-      difficultyScreen.style.display = 'flex';
-      saveSession({ screen: 'difficulty-screen', mode: quizState.mode, quizType: 'mixed', mixedTypes: quizState.mixedTypes });
+      // quiz mode mixed → scope-screen (no Content section)
+      quizState.contentScope = 'basic_only';
+      quizState.totalQuestions = 10;
+      quizState.timerMode = null;
+      initScopeScreen();
+      scopeScreen.style.display = 'flex';
+      saveSession({ screen: 'scope-screen', mode: quizState.mode, quizType: 'mixed', mixedTypes: quizState.mixedTypes, totalQuestions: 10, contentScope: 'basic_only', timerMode: null });
     }
   });
 
@@ -1226,6 +1479,7 @@ document.addEventListener('DOMContentLoaded', () => {
   quizTypeScreen.style.display = 'none';
   mixTypeScreen.style.display = 'none';
   difficultyScreen.style.display = 'none';
+  scopeScreen.style.display = 'none';
   groupFilterScreen.style.display = 'none';
   settingsScreen.style.display = 'none';
   mainQuiz.style.display = 'none';

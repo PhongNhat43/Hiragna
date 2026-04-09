@@ -1,6 +1,6 @@
 # Current Features
 
-_Cập nhật lần cuối: 2026-04-02 (sau HIRA-006)_
+_Cập nhật lần cuối: 2026-04-07 (sau HIRA-013)_
 
 ---
 
@@ -17,8 +17,8 @@ _Cập nhật lần cuối: 2026-04-02 (sau HIRA-006)_
 
 | Type | Dataset | Câu hỏi hiển thị | Đáp án |
 |---|---|---|---|
-| Hiragana | 20 ký tự (あ〜と) | Ký tự kana | Romaji |
-| Katakana | 20 ký tự (ア〜ト) | Ký tự kana | Romaji |
+| Hiragana | 98 ký tự (46 basic + 25 dakuten/handakuten + 27 yoon) | Ký tự kana | Romaji |
+| Katakana | 98 ký tự (46 basic + 25 dakuten/handakuten + 27 yoon) | Ký tự kana | Romaji |
 | Kanji | 27 ký tự N5 | Ký tự kanji | Nghĩa tiếng Anh |
 
 ---
@@ -27,8 +27,11 @@ _Cập nhật lần cuối: 2026-04-02 (sau HIRA-006)_
 
 Mỗi quiz type có nhóm riêng:
 
-**Hiragana / Katakana:**
-- All, Basic vowels (a/i/u/e/o), K-group, S-group
+**Hiragana / Katakana** (16 groups mỗi type):
+- All
+- Basic vowels, K-group, S-group, T-group, N-group, H-group, M-group, Y-group, R-group, W-group+N
+- GA-group, ZA-group, DA-group, BA-group, PA-group (dakuten/handakuten)
+- Yoon (basic), Yoon (voiced)
 
 **Kanji:**
 - All, Numbers (一〜千), Nature (山〜月), People (人〜母)
@@ -60,7 +63,7 @@ Group buttons được render động theo quiz type đã chọn.
 - Answer highlighting: đúng = xanh, sai = đỏ + hiển thị đáp án đúng màu xanh
 - Skip button: bỏ qua, không tính điểm
 - Next button: chỉ hiển thị khi autoAdvance = Off
-- Không lặp câu hỏi trong cùng một session — dataset được shuffle khi bắt đầu, câu hỏi được chọn tuần tự
+- Câu hỏi được chọn theo **adaptive weighted selection**: item yếu (accuracy thấp) xuất hiện nhiều hơn, item vừa gặp bị giảm tạm, item đã thành thạo vẫn được ôn duy trì (weight floor 0.05)
 
 ## Quiz Mode — Sau Quiz
 
@@ -100,6 +103,8 @@ Group buttons được render động theo quiz type đã chọn.
 - Khi trả lời **đúng** → nếu ký tự đang là weak item → tự động xóa khỏi danh sách (adaptive)
 - Weak items lưu vào `localStorage` (key: `hiragna_weak_items`), còn sau khi reload trang
 - Áp dụng trong mọi quiz mode (Quiz Mode và Weak Review)
+- **Per-item stats** (từ HIRA-013): mỗi ký tự lưu `{correct, wrong, lastSeenTs, streak}` vào `localStorage` (key: `hiragna_item_stats`). Dùng cho adaptive weighted selection. Không áp dụng cho mixed mode (V1).
+- Reset Progress xóa cả progress stats lẫn item stats
 
 ### Weak Review Mode
 

@@ -99,6 +99,24 @@ Tách biệt để không phá vỡ Review Mistakes logic hiện tại.
 
 ---
 
+## [2026-04-07] Adaptive weighted selection thay thế sequential pick
+
+**Quyết định:** `generateQuestion()` chuyển từ sequential pick (`questionCount % dataSet.length`) sang `pickWeighted()` — weighted random selection dựa trên per-item stats.
+
+**Lý do:** Sequential pick với pre-shuffle đảm bảo không lặp nhưng không phân biệt item yếu/mạnh. Adaptive selection ưu tiên item yếu, hạn chế item vừa gặp, và vẫn giữ floor weight 0.05 để item đã thành thạo được ôn duy trì. Supersedes quyết định [2026-04-04] về sequential pick.
+
+**Weight formula:** `max(accuracy_mult × recency_mult × absence_mult, 0.05)` — ba chiều: accuracy (0.15×–3.0×), recency in-session (0.05×–1.0×), cross-session absence (1.0×–1.6×).
+
+---
+
+## [2026-04-07] Yoon romanization: Hepburn chuẩn
+
+**Quyết định:** Yoon dùng Hepburn chuẩn: じゃ=ja/ju/jo, ぎゃ=gya/gyu/gyo. Đặc biệt: ぢ=di, づ=du (không collapsing thành ji/zu như một số hệ thống khác).
+
+**Lý do:** Giữ romaji unique per item trong dataset — nếu ぢ=ji và じ=ji thì hai kana sẽ có cùng romaji, gây conflict trong filter logic và options pool. Hepburn chuẩn tránh được vấn đề này.
+
+---
+
 ## [2026-03-30] Single quizState object pattern
 
 **Quyết định:** Toàn bộ state quiz sống trong một object `quizState` duy nhất.

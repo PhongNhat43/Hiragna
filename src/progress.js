@@ -141,3 +141,59 @@ function clearSession() {
     // fail silently
   }
 }
+
+// --- Item Stats ---
+
+const ITEM_STATS_KEY = 'hiragna_item_stats';
+
+function getDefaultItemStats() {
+  return { hiragana: {}, katakana: {}, kanji: {}, mixed: {} };
+}
+
+function loadItemStats() {
+  try {
+    const raw = localStorage.getItem(ITEM_STATS_KEY);
+    if (!raw) return getDefaultItemStats();
+    const parsed = JSON.parse(raw);
+    const def = getDefaultItemStats();
+    Object.keys(def).forEach(key => {
+      if (!parsed[key]) parsed[key] = def[key];
+    });
+    return parsed;
+  } catch (e) {
+    return getDefaultItemStats();
+  }
+}
+
+function saveItemStats(data) {
+  try {
+    localStorage.setItem(ITEM_STATS_KEY, JSON.stringify(data));
+  } catch (e) {
+    // fail silently
+  }
+}
+
+function resetItemStats() {
+  try {
+    localStorage.removeItem(ITEM_STATS_KEY);
+  } catch (e) {
+    // fail silently
+  }
+}
+
+function updateItemStat(type, kana, isCorrect) {
+  if (type === 'mixed') return; // mixed mode: skip per-item tracking in V1
+  const stats = loadItemStats();
+  if (!stats[type]) stats[type] = {};
+  if (!stats[type][kana]) stats[type][kana] = { correct: 0, wrong: 0, lastSeenTs: null, streak: 0 };
+  const item = stats[type][kana];
+  item.lastSeenTs = Date.now();
+  if (isCorrect) {
+    item.correct++;
+    item.streak++;
+  } else {
+    item.wrong++;
+    item.streak = 0;
+  }
+  saveItemStats(stats);
+}

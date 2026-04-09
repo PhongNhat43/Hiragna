@@ -865,3 +865,77 @@ body {
   width: 100%;
 }
 #pt-pt-home-btn:hover { background: #c7d2fe; }
+
+/* ========================
+   Scope Screen
+   ======================== */
+.scope-section {
+  width: 100%;
+  margin-bottom: 16px;
+}
+.scope-section-label {
+  font-weight: bold;
+  color: #374151;
+  margin: 0 0 8px 0;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.scope-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.scope-btn {
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  border: 2px solid #c7d2fe;
+  border-radius: 8px;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.scope-btn:hover {
+  background: #e0e7ff;
+  border-color: #6366f1;
+}
+.scope-btn.active {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: #fff;
+  font-weight: bold;
+}
+#confirm-scope-btn {
+  padding: 10px 24px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  background: #6366f1;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+#confirm-scope-btn:hover { background: #4338ca; }
+
+/* ========================
+   Timer Display
+   ======================== */
+#timer-display {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #6366f1;
+  text-align: center;
+  padding: 4px 0 2px;
+  min-height: 2rem;
+  letter-spacing: 0.02em;
+}
+#timer-display.timer-warning {
+  color: #dc2626;
+  animation: timer-pulse 0.5s ease-in-out infinite alternate;
+}
+@keyframes timer-pulse {
+  from { opacity: 1; }
+  to   { opacity: 0.55; }
+}

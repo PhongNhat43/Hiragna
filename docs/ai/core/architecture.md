@@ -27,11 +27,17 @@ const QUIZ_TYPE_CONFIG = {
 Groups per quiz type. Filter là mảng romaji/meaning values; `null` = toàn bộ dataset.
 ```js
 const GROUP_CONFIG = {
-  hiragana: { all, basic_vowels, k_group, s_group },
-  katakana:  { all, basic_vowels, k_group, s_group },
-  kanji:     { all, numbers, nature, people }
+  hiragana: {
+    all, basic_vowels,
+    k_group, s_group, ta_group, na_group, ha_group, ma_group, ya_group, ra_group, wa_group,
+    ga_group, za_group, da_group, ba_group, pa_group,
+    yoon_basic, yoon_dakuten
+  },
+  katakana: { /* mirror hiragana */ },
+  kanji:    { all, numbers, nature, people }
 };
 ```
+Group buttons được render động — thêm group mới vào GROUP_CONFIG là đủ, không cần sửa HTML.
 
 ### DIFFICULTY_CONFIG
 ```js
@@ -66,7 +72,8 @@ const quizState = {
   selectedGroup: 'all',
   autoAdvance: true,
   feedbackDelay: 800,
-  reviewEnabled: true
+  reviewEnabled: true,
+  recentItems: []          // kana của 6 câu gần nhất — dùng cho recency penalty trong pickWeighted()
 };
 ```
 
@@ -92,3 +99,14 @@ không hardcode trong HTML.
 ```
 
 `quiz.js` phụ thuộc vào config objects từ `hiraganaData.js` và functions từ `progress.js` qua global scope.
+
+---
+
+## Persistence layer — localStorage keys
+
+| Key | Nội dung |
+|---|---|
+| `hiragna_progress` | Aggregate stats (totalQuizzes, correct, wrong) per quiz type |
+| `hiragna_weak_items` | Danh sách kana yếu (binary) per quiz type |
+| `hiragna_item_stats` | Per-item stats `{correct, wrong, lastSeenTs, streak}` per type/kana — dùng cho adaptive selection |
+| `hiragna_session` | _(sessionStorage)_ Screen navigation state cho session restore |

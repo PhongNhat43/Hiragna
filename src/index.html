@@ -102,6 +102,38 @@
     </div>
     <button id="back-from-difficulty-btn" class="back-btn">Quay Lại</button>
   </div>
+  <div id="scope-screen" class="quiz-container" style="display: none;">
+    <h2>Cài Đặt Phiên</h2>
+    <div id="scope-content-section" class="scope-section">
+      <p class="scope-section-label">Nội dung</p>
+      <div class="scope-options" id="scope-content-options">
+        <button class="scope-btn active" data-scope="basic_only">Basic only</button>
+        <button class="scope-btn" data-scope="basic_plus_daku">Basic + Dakuten</button>
+        <button class="scope-btn" data-scope="full">Full kana</button>
+        <button class="scope-btn" data-scope="focus_daku">Focus: Dakuten</button>
+        <button class="scope-btn" data-scope="focus_yoon">Focus: Yoon</button>
+      </div>
+    </div>
+    <div class="scope-section">
+      <p class="scope-section-label">Số câu hỏi</p>
+      <div class="scope-options">
+        <button class="scope-btn active" data-questions="10">10</button>
+        <button class="scope-btn" data-questions="20">20</button>
+        <button class="scope-btn" data-questions="30">30</button>
+      </div>
+    </div>
+    <div class="scope-section">
+      <p class="scope-section-label">Timer</p>
+      <div class="scope-options">
+        <button class="scope-btn active" data-timer="off">Tắt</button>
+        <button class="scope-btn" data-timer="per_question">10s/câu</button>
+      </div>
+    </div>
+    <div class="button-row">
+      <button id="back-from-scope-btn" class="back-btn">Quay Lại</button>
+      <button id="confirm-scope-btn">Tiếp Theo</button>
+    </div>
+  </div>
   <div id="group-filter-screen" class="quiz-container" style="display: none;">
     <h2>Chọn Nhóm</h2>
     <div id="group-buttons"></div>
@@ -144,6 +176,7 @@
       <div id="progress-bar"></div>
       <span id="question-counter"></span>
     </div>
+    <div id="timer-display" style="display: none;"></div>
     <div id="question-area">
       <span id="hiragana-char"></span>
     </div>
