@@ -1,3 +1,5 @@
+> Legacy compatibility note: task sizing rule tóm tắt đã được map vào `AGENTS.md`, còn workflow theo loại task sống trong `docs/ai/playbooks/small-change.md` và `docs/ai/playbooks/big-feature.md`.
+
 # Task Sizing Rules
 
 ## Tiêu chí phân loại

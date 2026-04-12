@@ -1,97 +1,29 @@
-# Hướng dẫn AI — Hiragana Quiz
+# Claude Compatibility Shim
 
-## Tài liệu bắt buộc đọc trước khi làm việc
+File này được giữ lại để tương thích với workflow cũ.
 
-Đọc đủ 4 tài liệu sau trước khi phân tích hoặc thực hiện bất kỳ task nào:
+## Source Of Truth Mới
 
-- `docs/ai/core/context.md` — bối cảnh và mục tiêu project
-- `docs/ai/core/architecture.md` — kiến trúc 3 lớp, config objects, quizState
-- `.claude/rules/global.md` — quy tắc code và ngôn ngữ
-- `docs/ai/product/current-features.md` — tính năng hiện tại
-- `docs/ai/product/current-flows.md` — flow màn hình hiện tại
+- Root instructions: `AGENTS.md`
+- Procedural workflows: `docs/ai/playbooks/`
+- Task state: `docs/ai/tasks/`
+- Core/product context: `docs/ai/core/`, `docs/ai/product/`
 
----
+## Kỳ vọng khi đọc file này
 
-## Khi bắt đầu session mới
+- Không coi `CLAUDE.md` là entrypoint chính nữa
+- Ưu tiên đọc `AGENTS.md` trước
+- Nếu cần workflow cụ thể:
+  - audit → `docs/ai/playbooks/project-audit.md`
+  - task nhỏ → `docs/ai/playbooks/small-change.md`
+  - task vừa/lớn → `docs/ai/playbooks/big-feature.md`
+  - chẩn đoán bug → `docs/ai/playbooks/diagnose-bug.md`
+  - fix bug → `docs/ai/playbooks/fix-bug.md`
+  - self-review → `docs/ai/playbooks/verification.md`
+  - sync docs → `docs/ai/playbooks/docs-sync.md`
+  - archive task → `docs/ai/playbooks/archive-task.md`
 
-Trước khi nhận yêu cầu, kiểm tra `docs/ai/tasks/active/`:
-- Nếu **có task đang mở**: đọc `task.md` và `result.md` (nếu có), surface cho người dùng — task nào đang active, đang ở bước nào — và hỏi có muốn tiếp tục không.
-- Nếu **không có task nào**: tiến hành bình thường.
+## Transitional Note
 
----
-
-## Quy trình làm việc
-
-1. Đọc `CLAUDE.md` và các tài liệu liên quan đến task hiện tại.
-2. Phân loại yêu cầu:
-   - chỉ phân tích → không sửa file
-   - task nhỏ, rõ scope → phân tích ngắn, thống nhất rồi implement
-   - task vừa/lớn, nhiều file, đổi flow hoặc có rủi ro → phải tạo hồ sơ task và lên plan trước
-3. Với task vừa/lớn:
-   - tạo task folder tại `docs/ai/tasks/active/HIRA-XXX-ten-task/`
-   - điền `task.md`
-   - điền `plan.md`
-   - chờ duyệt plan
-   - implement
-   - cập nhật `result.md`
-4. Nếu phát sinh bug:
-   - bug còn trong scope → cập nhật plan/result và fix trong task hiện tại
-   - bug vượt scope → tạo task bug mới
-5. Chỉ archive khi:
-   - code xong
-   - `result.md` đã cập nhật
-   - người dùng đã verify
-   - người dùng xác nhận đóng task
-6. Hội thoại không phải nơi lưu trạng thái duy nhất của task; task state phải sống trong repo.
-
-Templates: `docs/ai/templates/task-record-template.md`, `plan-record-template.md`, `result-record-template.md`
-
-Skills: `/small-change`, `/big-feature`, `/diagnose-bug`, `/fix-bug`, `/docs-sync`, `/archive-task`, `/project-audit`
-
-### Grapuco (code graph)
-
-Nếu repo đã được Grapuco index, dùng để hỗ trợ phân tích cấu trúc, dependency, impact, data flow.
-Không bắt buộc cho mọi task. Chi tiết: `.claude/rules/global.md` → mục Grapuco.
-
-### Thay đổi tối thiểu
-
-- Chỉ sửa các file trực tiếp liên quan đến task
-- Không tự refactor code xung quanh
-- Không thêm tính năng ngoài yêu cầu
-- Không tạo file mới nếu không cần thiết
-
-### Sau khi hoàn thành
-
-Tóm tắt ngắn gọn:
-- Danh sách file đã thay đổi
-- Cách verify tính năng vừa làm
-
----
-
-## Kiến trúc — tóm tắt nhanh
-
-| Layer | File | Không được làm |
-|---|---|---|
-| UI | `src/index.html`, `src/style.css` | Chứa quiz logic |
-| Logic | `src/quiz.js` | Lẫn UI render vào business logic |
-| Data | `src/hiraganaData.js` | Đặt state rời ngoài `quizState` |
-
-Chi tiết: `docs/ai/core/architecture.md` — Vùng nguy hiểm: `docs/ai/core/risk-zones.md`
-
----
-
-## Self-check sau khi code
-
-- [ ] Tất cả buttons clickable
-- [ ] Skip question hoạt động
-- [ ] Score cập nhật đúng
-- [ ] Không phá vỡ tính năng hiện có
-
-Kiểm tra đầy đủ: `docs/ai/templates/verification-checklist.md`
-
----
-
-## Nguyên tắc chung
-
-- Không sửa `src/` ngoài yêu cầu rõ ràng
-- Không xóa tính năng đang hoạt động
+- `.claude/rules/*` và `.claude/skills/*` vẫn được giữ lại để compatibility và đối chiếu migration
+- Không xóa các file legacy này cho đến khi repo review xong mapping mới

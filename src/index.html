@@ -17,6 +17,7 @@
     <button id="view-progress-btn">Xem Tiến Trình</button>
     <button id="pt-btn">Luyện Phát Âm</button>
     <button id="nt-btn">Luyện Số</button>
+    <button id="daily-btn">Học mỗi ngày</button>
   </div>
   <div id="progress-screen" class="quiz-container" style="display: none;">
     <h2>Tiến Trình Học</h2>
@@ -129,6 +130,53 @@
     </div>
   </div>
   <!-- End Number Trainer screens -->
+
+  <!-- Daily Lesson screens -->
+  <div id="daily-overview-screen" class="quiz-container" style="display: none;">
+    <h2>Học Mỗi Ngày</h2>
+    <p class="daily-subtitle">Mỗi ngày gồm 5 từ vựng và 3 kanji</p>
+    <div id="daily-overview-list"></div>
+    <button id="back-from-daily-overview-btn" class="back-btn">← Quay Lại</button>
+  </div>
+
+  <div id="daily-learn-screen" class="quiz-container" style="display: none;">
+    <div id="daily-phase-label"></div>
+    <div id="daily-progress"></div>
+    <h2 id="daily-day-title">Ngày học</h2>
+    <div id="daily-card-section">
+      <div id="daily-card-main"></div>
+      <button id="daily-speak-btn" class="daily-speak-btn" type="button" title="Nghe phát âm">🔊</button>
+      <div id="daily-card-reading"></div>
+      <div id="daily-card-meaning"></div>
+      <div id="daily-card-type"></div>
+    </div>
+    <div id="daily-learn-actions">
+      <button id="daily-next-btn">Tiếp →</button>
+    </div>
+    <button id="daily-exit-learn-btn" class="back-btn">← Thoát</button>
+  </div>
+
+  <div id="daily-practice-screen" class="quiz-container" style="display: none;">
+    <div id="daily-practice-label"></div>
+    <div id="daily-practice-progress"></div>
+    <div id="daily-practice-type"></div>
+    <div id="daily-practice-prompt"></div>
+    <button id="daily-practice-speak-btn" class="daily-speak-btn" type="button" title="Nghe phát âm">🔊</button>
+    <div id="daily-practice-secondary"></div>
+    <div id="daily-practice-options"></div>
+    <button id="daily-exit-practice-btn" class="back-btn">← Thoát</button>
+  </div>
+
+  <div id="daily-summary-screen" class="quiz-container" style="display: none;">
+    <h2 id="daily-summary-title">Hoàn thành ngày học</h2>
+    <div id="daily-summary-content"></div>
+    <div id="daily-summary-actions">
+      <button id="daily-retry-btn">Ôn lại ngày này</button>
+      <button id="daily-other-day-btn">Chọn ngày khác</button>
+      <button id="daily-home-btn">Về Trang Chủ</button>
+    </div>
+  </div>
+  <!-- End Daily Lesson screens -->
 
   <div id="difficulty-screen" class="quiz-container" style="display: none;">
     <h2>Chọn Độ Khó</h2>
@@ -248,7 +296,9 @@
   <script src="hiraganaData.js"></script>
   <script src="progress.js"></script>
   <script src="numberData.js"></script>
+  <script src="dailyLessonsData.js"></script>
   <script src="quiz.js"></script>
   <script src="numberTrainer.js"></script>
+  <script src="dailyLesson.js"></script>
 </body>
 </html>

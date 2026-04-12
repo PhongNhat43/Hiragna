@@ -1,5 +1,5 @@
 #!/bin/bash
-# verify.sh — Kiểm tra scaffold và task workflow structure của project Hiragna
+# verify.sh — Kiểm tra scaffold và AI workflow structure của project Hiragna
 
 PASS=0; FAIL=0
 
@@ -20,8 +20,24 @@ check "src/quiz.js"
 check "src/hiraganaData.js"
 
 echo ""
-echo "=== Claude Code config ==="
+echo "=== AI workflow entrypoints ==="
+check "AGENTS.md"
 check "CLAUDE.md"
+check ".codex/config.toml"
+
+echo ""
+echo "=== Codex playbooks ==="
+check "docs/ai/playbooks/project-audit.md"
+check "docs/ai/playbooks/small-change.md"
+check "docs/ai/playbooks/big-feature.md"
+check "docs/ai/playbooks/diagnose-bug.md"
+check "docs/ai/playbooks/fix-bug.md"
+check "docs/ai/playbooks/verification.md"
+check "docs/ai/playbooks/docs-sync.md"
+check "docs/ai/playbooks/archive-task.md"
+
+echo ""
+echo "=== Legacy compatibility (.claude) ==="
 check ".claude/settings.json"
 check ".claude/rules/global.md"
 check ".claude/rules/bug-handling.md"
@@ -61,4 +77,4 @@ check "docs/ai/tasks/archive"
 
 echo ""
 echo "Kết quả: $PASS OK / $FAIL MISSING"
-[ $FAIL -eq 0 ] && echo "Scaffold hợp lệ." && exit 0 || exit 1
+[ $FAIL -eq 0 ] && echo "AI workflow scaffold hợp lệ." && exit 0 || exit 1

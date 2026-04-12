@@ -145,6 +145,7 @@ function clearSession() {
 // --- Item Stats ---
 
 const ITEM_STATS_KEY = 'hiragna_item_stats';
+const DAILY_LESSON_PROGRESS_KEY = 'hiragna_daily_lessons';
 
 function getDefaultItemStats() {
   return { hiragana: {}, katakana: {}, kanji: {}, mixed: {} };
@@ -196,4 +197,39 @@ function updateItemStat(type, kana, isCorrect) {
     item.streak = 0;
   }
   saveItemStats(stats);
+}
+
+// --- Daily Lessons ---
+
+function getDefaultDailyLessonProgress() {
+  return {};
+}
+
+function loadDailyLessonProgress() {
+  try {
+    const raw = localStorage.getItem(DAILY_LESSON_PROGRESS_KEY);
+    if (!raw) return getDefaultDailyLessonProgress();
+    return JSON.parse(raw);
+  } catch (e) {
+    return getDefaultDailyLessonProgress();
+  }
+}
+
+function saveDailyLessonProgress(data) {
+  try {
+    localStorage.setItem(DAILY_LESSON_PROGRESS_KEY, JSON.stringify(data));
+  } catch (e) {
+    // fail silently
+  }
+}
+
+function saveDailyLessonStatus(dayId, status) {
+  const progress = loadDailyLessonProgress();
+  progress[dayId] = progress[dayId] || {};
+  progress[dayId].status = status;
+  progress[dayId].updatedAt = Date.now();
+  if (status === 'completed') {
+    progress[dayId].completedAt = Date.now();
+  }
+  saveDailyLessonProgress(progress);
 }

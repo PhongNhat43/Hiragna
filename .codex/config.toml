@@ -1,0 +1,20 @@
+# Project-scoped Codex config.
+# Keep runtime/config only here; workflow logic lives in AGENTS.md and docs/ai/.
+
+model = "gpt-5"
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+
+[paths]
+task_root = "docs/ai/tasks"
+playbooks_root = "docs/ai/playbooks"
+verify_script = "scripts/verify.sh"
+
+[workflow]
+default = "audit-plan-approve-implement"
+task_id_prefix = "HIRA"
+requires_task_folder_for_large_changes = true
+
+[reporting]
+require_self_review = true
+require_manual_verify_notes = true

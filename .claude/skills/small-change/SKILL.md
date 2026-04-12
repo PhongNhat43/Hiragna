@@ -4,6 +4,8 @@ description: Xử lý task nhỏ (1–2 file, không đổi flow, scope rõ). Ph
 disable-model-invocation: true
 ---
 
+> Legacy compatibility note: source of truth đã chuyển sang `docs/ai/playbooks/small-change.md`. Giữ file này để migration an toàn.
+
 Task nhỏ: $ARGUMENTS
 
 Thực hiện theo thứ tự — không bỏ bước, không implement trước khi được xác nhận:

@@ -1,3 +1,5 @@
+> Legacy compatibility note: verification guidance hiện được map sang `docs/ai/playbooks/verification.md`. Giữ file này để compatibility và đối chiếu lịch sử.
+
 # Self-Test Rules
 
 ## Nguyên tắc Verification-before-completion

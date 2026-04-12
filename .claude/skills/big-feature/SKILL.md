@@ -4,6 +4,8 @@ description: Xử lý feature vừa/lớn (nhiều file, đổi flow/state, rủ
 disable-model-invocation: true
 ---
 
+> Legacy compatibility note: source of truth đã chuyển sang `docs/ai/playbooks/big-feature.md`. Giữ file này để migration an toàn.
+
 Feature mới: $ARGUMENTS
 
 Workflow bắt buộc — chưa code cho đến khi plan được duyệt:

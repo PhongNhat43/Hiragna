@@ -1,3 +1,5 @@
+> Legacy compatibility note: source of truth đã chuyển sang `AGENTS.md` và `docs/ai/playbooks/`. Giữ file này để tham chiếu/migration, chưa xóa trong giai đoạn chuyển tiếp.
+
 # Global Rules
 
 ## Ngôn ngữ và giao tiếp

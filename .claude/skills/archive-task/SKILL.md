@@ -4,6 +4,8 @@ description: Finalization skill — điều phối toàn bộ bước cuối tas
 disable-model-invocation: true
 ---
 
+> Legacy compatibility note: source of truth đã chuyển sang `docs/ai/playbooks/archive-task.md`. Giữ file này để migration an toàn.
+
 Finalize task: $ARGUMENTS
 
 ## Bước 1 — Xác định task

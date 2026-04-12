@@ -1192,3 +1192,268 @@ body {
   width: 100%;
 }
 #nt-home-btn:hover { background: #c7d2fe; }
+
+/* ===== Daily Lesson ===== */
+#daily-btn {
+  margin-top: 10px;
+  padding: 14px 32px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 10px;
+  background: #ecfccb;
+  color: #3f6212;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s, color 0.2s;
+}
+#daily-btn:hover {
+  background: #d9f99d;
+}
+.daily-subtitle {
+  color: #6b7280;
+  font-size: 0.92rem;
+  margin: 4px 0 20px 0;
+  text-align: center;
+}
+#daily-overview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 12px;
+}
+.daily-day-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+  padding: 16px 18px;
+  border: 2px solid #d9f99d;
+  border-radius: 12px;
+  background: #f7fee7;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s, border-color 0.2s;
+}
+.daily-day-btn:hover {
+  background: #ecfccb;
+  border-color: #84cc16;
+}
+.daily-day-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #365314;
+}
+.daily-day-meta {
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+.daily-status-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: bold;
+}
+.daily-status-badge.not-started {
+  background: #e5e7eb;
+  color: #4b5563;
+}
+.daily-status-badge.in-progress {
+  background: #fde68a;
+  color: #92400e;
+}
+.daily-status-badge.completed {
+  background: #bbf7d0;
+  color: #166534;
+}
+#daily-learn-screen,
+#daily-practice-screen {
+  min-height: 440px;
+}
+#daily-phase-label,
+#daily-practice-label {
+  font-size: 0.86rem;
+  font-weight: bold;
+  color: #3f6212;
+  background: #ecfccb;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  align-self: flex-start;
+}
+#daily-progress,
+#daily-practice-progress {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  margin-bottom: 12px;
+  align-self: flex-end;
+}
+#daily-day-title {
+  margin-bottom: 18px;
+}
+#daily-card-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 10px;
+  margin-bottom: 24px;
+  width: 100%;
+}
+#daily-card-main {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #1f2937;
+  text-align: center;
+}
+.daily-speak-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border: none;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  margin: 2px auto 4px auto;
+}
+.daily-speak-btn:hover {
+  background: #bbf7d0;
+  transform: translateY(-1px);
+}
+#daily-card-reading {
+  font-size: 1.35rem;
+  color: #3f6212;
+  font-weight: bold;
+}
+#daily-card-meaning {
+  font-size: 1rem;
+  color: #4b5563;
+  text-align: center;
+}
+#daily-card-type,
+#daily-practice-type {
+  font-size: 0.85rem;
+  color: #6b7280;
+  background: #f3f4f6;
+  border-radius: 999px;
+  padding: 4px 12px;
+}
+#daily-learn-actions,
+#daily-summary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+#daily-next-btn,
+#daily-retry-btn,
+#daily-other-day-btn,
+#daily-home-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#daily-next-btn,
+#daily-retry-btn {
+  background: #65a30d;
+  color: #fff;
+}
+#daily-next-btn:hover,
+#daily-retry-btn:hover {
+  background: #4d7c0f;
+}
+#daily-other-day-btn {
+  background: #ecfccb;
+  color: #3f6212;
+}
+#daily-other-day-btn:hover {
+  background: #d9f99d;
+}
+#daily-home-btn {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+#daily-home-btn:hover {
+  background: #bfdbfe;
+}
+#daily-practice-screen {
+  align-items: stretch;
+}
+#daily-practice-prompt {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #1f2937;
+  text-align: center;
+  margin: 20px 0 10px 0;
+}
+#daily-practice-secondary {
+  font-size: 1rem;
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 18px;
+}
+#daily-practice-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 18px;
+}
+.daily-practice-option {
+  padding: 16px 12px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: 2px solid #d9f99d;
+  border-radius: 10px;
+  background: #f7fee7;
+  color: #1f2937;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.daily-practice-option:hover:not(:disabled) {
+  background: #ecfccb;
+  border-color: #84cc16;
+}
+.daily-practice-option:disabled {
+  cursor: default;
+}
+.daily-practice-option.correct {
+  background: #bbf7d0;
+  border-color: #16a34a;
+  color: #166534;
+}
+.daily-practice-option.wrong {
+  background: #fecaca;
+  border-color: #dc2626;
+  color: #b91c1c;
+}
+#daily-summary-content {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #374151;
+}
+.daily-summary-score {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #3f6212;
+}
+.daily-summary-status {
+  font-size: 1rem;
+  font-weight: bold;
+}
+.daily-summary-note {
+  font-size: 0.92rem;
+  color: #6b7280;
+}

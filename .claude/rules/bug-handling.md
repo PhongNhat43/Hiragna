@@ -1,3 +1,5 @@
+> Legacy compatibility note: bug workflow hiện được map sang `docs/ai/playbooks/diagnose-bug.md` và `docs/ai/playbooks/fix-bug.md`. Giữ file này để đối chiếu trong migration.
+
 # Bug Handling Rules
 
 ## Nguyên tắc chung

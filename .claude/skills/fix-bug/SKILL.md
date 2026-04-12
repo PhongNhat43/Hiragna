@@ -4,6 +4,8 @@ description: Thực thi bug fix sau khi đã có root cause rõ và người dù
 disable-model-invocation: true
 ---
 
+> Legacy compatibility note: source of truth đã chuyển sang `docs/ai/playbooks/fix-bug.md`. Giữ file này để migration an toàn.
+
 Implement bug fix: $ARGUMENTS
 
 ## Bước 0 — Kiểm tra điều kiện trước khi sửa

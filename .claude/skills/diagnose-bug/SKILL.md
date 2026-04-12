@@ -4,6 +4,8 @@ description: Chẩn đoán bug theo diagnosis-first: phân loại scope → truy
 disable-model-invocation: true
 ---
 
+> Legacy compatibility note: source of truth đã chuyển sang `docs/ai/playbooks/diagnose-bug.md`. Giữ file này để migration an toàn.
+
 Bug cần chẩn đoán: $ARGUMENTS
 
 Không sửa code ngay. Diagnosis và implement là hai bước tách biệt.

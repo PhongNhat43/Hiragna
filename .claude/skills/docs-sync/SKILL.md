@@ -4,6 +4,8 @@ description: Phân tích task vừa thực hiện và xác định tài liệu n
 disable-model-invocation: true
 ---
 
+> Legacy compatibility note: source of truth đã chuyển sang `docs/ai/playbooks/docs-sync.md`. Giữ file này để migration an toàn.
+
 Đồng bộ tài liệu sau thay đổi: $ARGUMENTS
 
 ## Bước 1 — Xác định nguồn context

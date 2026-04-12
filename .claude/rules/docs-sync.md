@@ -1,3 +1,5 @@
+> Legacy compatibility note: docs sync workflow hiện được map sang `docs/ai/playbooks/docs-sync.md` và `docs/ai/playbooks/archive-task.md`.
+
 # Docs Sync Rules
 
 ## Nguyên tắc

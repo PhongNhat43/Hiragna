@@ -4,6 +4,8 @@ description: Audit tổng thể hoặc một phần project — kiến trúc, de
 disable-model-invocation: true
 ---
 
+> Legacy compatibility note: source of truth đã chuyển sang `docs/ai/playbooks/project-audit.md`. Giữ file này để migration an toàn.
+
 Audit: $ARGUMENTS
 
 **Bước 1 — Kiểm tra Grapuco:**
