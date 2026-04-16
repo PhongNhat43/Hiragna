@@ -3,7 +3,7 @@
 
 const dlState = {
   dayId: null,
-  phase: null, // 'overview' | 'learn-vocab' | 'learn-kanji' | 'practice' | 'summary'
+  phase: null, // 'overview' | 'learn-vocab-a' | 'learn-vocab-b' | 'learn-kanji' | 'practice' | 'summary'
   vocabItems: [],
   kanjiItems: [],
   practiceItems: [],
@@ -23,11 +23,17 @@ document.addEventListener('DOMContentLoaded', function() {
   var dailyPhaseLabel = document.getElementById('daily-phase-label');
   var dailyProgress = document.getElementById('daily-progress');
   var dailyDayTitle = document.getElementById('daily-day-title');
+  var dailyCardTopic = document.getElementById('daily-card-topic');
   var dailyCardMain = document.getElementById('daily-card-main');
   var dailySpeakBtn = document.getElementById('daily-speak-btn');
   var dailyCardReading = document.getElementById('daily-card-reading');
+  var dailyCardPronunciation = document.getElementById('daily-card-pronunciation');
   var dailyCardMeaning = document.getElementById('daily-card-meaning');
   var dailyCardType = document.getElementById('daily-card-type');
+  var dailyCardNote = document.getElementById('daily-card-note');
+  var dailyCardExample = document.getElementById('daily-card-example');
+  var dailyCardExampleJp = document.getElementById('daily-card-example-jp');
+  var dailyCardExampleMeaning = document.getElementById('daily-card-example-meaning');
   var dailyNextBtn = document.getElementById('daily-next-btn');
   var dailyExitLearnBtn = document.getElementById('daily-exit-learn-btn');
   var dailyPracticeScreen = document.getElementById('daily-practice-screen');
@@ -59,6 +65,14 @@ document.addEventListener('DOMContentLoaded', function() {
     return progress[dayId].status || 'not_started';
   }
 
+  function getCategoryLabel(category) {
+    if (category === 'suffix') return 'Hậu tố';
+    if (category === 'phrase') return 'Mẫu câu';
+    if (category === 'greeting') return 'Giao tiếp';
+    if (category === 'kanji') return 'Kanji';
+    return 'Từ vựng';
+  }
+
   function getStatusMeta(status) {
     if (status === 'completed') {
       return { label: 'Hoàn thành', className: 'completed' };
@@ -69,14 +83,74 @@ document.addEventListener('DOMContentLoaded', function() {
     return { label: 'Chưa học', className: 'not-started' };
   }
 
+  function escapeHtml(text) {
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function renderHighlightedExample(sentence, keyword) {
+    if (!sentence) return '';
+
+    var safeSentence = escapeHtml(sentence);
+    if (!keyword) return safeSentence;
+
+    var safeKeyword = escapeHtml(keyword);
+    var index = safeSentence.indexOf(safeKeyword);
+    if (index === -1) return safeSentence;
+
+    return (
+      safeSentence.slice(0, index) +
+      '<span class="daily-card-highlight">' + safeKeyword + '</span>' +
+      safeSentence.slice(index + safeKeyword.length)
+    );
+  }
+
+  function renderVocabExtra(item) {
+    if (item.pronunciationVi) {
+      dailyCardPronunciation.textContent = 'Phát âm gần đúng: ' + item.pronunciationVi;
+      dailyCardPronunciation.style.display = 'block';
+    } else {
+      dailyCardPronunciation.textContent = '';
+      dailyCardPronunciation.style.display = 'none';
+    }
+
+    if (item.example && item.example.jp && item.example.meaning) {
+      dailyCardExample.style.display = 'block';
+      dailyCardExampleJp.innerHTML = renderHighlightedExample(
+        item.example.jp,
+        item.example.highlight || item.jp
+      );
+      dailyCardExampleMeaning.textContent = item.example.meaning;
+    } else {
+      dailyCardExample.style.display = 'none';
+      dailyCardExampleJp.innerHTML = '';
+      dailyCardExampleMeaning.textContent = '';
+    }
+  }
+
+  function hideVocabExtra() {
+    dailyCardPronunciation.textContent = '';
+    dailyCardPronunciation.style.display = 'none';
+    dailyCardExample.style.display = 'none';
+    dailyCardExampleJp.innerHTML = '';
+    dailyCardExampleMeaning.textContent = '';
+  }
+
   function normalizePracticeItems(day) {
     var vocabItems = day.vocab.map(function(item) {
       return {
         id: item.id,
         type: 'vocab',
+        category: item.category,
         prompt: item.jp,
         answer: item.meaning,
-        secondary: item.reading
+        secondary: item.reading,
+        note: item.note,
+        audioText: item.audioText || item.reading
       };
     });
 
@@ -84,9 +158,12 @@ document.addEventListener('DOMContentLoaded', function() {
       return {
         id: item.id,
         type: 'kanji',
+        category: item.category,
         prompt: item.kanji,
         answer: item.reading,
-        secondary: item.meaning
+        secondary: item.meaning,
+        note: item.note,
+        audioText: item.audioText || item.reading
       };
     });
 
@@ -115,7 +192,8 @@ document.addEventListener('DOMContentLoaded', function() {
       button.className = 'daily-day-btn';
       button.innerHTML =
         '<span class="daily-day-title">' + day.label + '</span>' +
-        '<span class="daily-day-meta">Minna Bài ' + day.minnaLesson + ' · 5 vocab · 3 kanji</span>' +
+        '<span class="daily-day-topic">' + day.topic + '</span>' +
+        '<span class="daily-day-meta">Minna Bài ' + day.minnaLesson + ' · 10 vocab · 3 kanji</span>' +
         '<span class="daily-status-badge ' + status.className + '">' + status.label + '</span>';
       button.addEventListener('click', function() {
         startDay(day.id);
@@ -129,11 +207,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!day) return;
 
     dlState.dayId = dayId;
-    dlState.phase = 'learn-vocab';
+    dlState.phase = 'learn-vocab-a';
     dlState.vocabItems = day.vocab.slice();
     dlState.kanjiItems = day.kanji.slice();
     dlState.practiceItems = normalizePracticeItems(day);
-    dlState.currentItems = dlState.vocabItems.slice();
+    dlState.currentItems = dlState.vocabItems.slice(0, 5);
     dlState.currentIndex = 0;
     dlState.practiceResults = [];
     dlState.answerSelected = false;
@@ -153,20 +231,36 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!day || !item) return;
 
     dailyDayTitle.textContent = day.label + ' — Minna Bài ' + day.minnaLesson;
+    dailyCardTopic.textContent = day.topic;
     dailyProgress.textContent = (dlState.currentIndex + 1) + ' / ' + dlState.currentItems.length;
 
-    if (dlState.phase === 'learn-vocab') {
-      dailyPhaseLabel.textContent = '📖 Học từ vựng';
+    if (dlState.phase === 'learn-vocab-a') {
+      dailyPhaseLabel.textContent = '📖 Từ vựng 1/2';
       dailyCardMain.textContent = item.jp;
       dailyCardReading.textContent = item.reading;
       dailyCardMeaning.textContent = item.meaning;
-      dailyCardType.textContent = 'Từ vựng';
+      dailyCardType.textContent = getCategoryLabel(item.category);
+      dailyCardType.className = 'daily-category-badge';
+      dailyCardNote.textContent = item.note;
+      renderVocabExtra(item);
+    } else if (dlState.phase === 'learn-vocab-b') {
+      dailyPhaseLabel.textContent = '📖 Từ vựng 2/2';
+      dailyCardMain.textContent = item.jp;
+      dailyCardReading.textContent = item.reading;
+      dailyCardMeaning.textContent = item.meaning;
+      dailyCardType.textContent = getCategoryLabel(item.category);
+      dailyCardType.className = 'daily-category-badge';
+      dailyCardNote.textContent = item.note;
+      renderVocabExtra(item);
     } else {
       dailyPhaseLabel.textContent = '🈶 Học kanji';
       dailyCardMain.textContent = item.kanji;
       dailyCardReading.textContent = item.reading;
       dailyCardMeaning.textContent = item.meaning;
-      dailyCardType.textContent = 'Kanji';
+      dailyCardType.textContent = getCategoryLabel(item.category);
+      dailyCardType.className = 'daily-category-badge';
+      dailyCardNote.textContent = item.note;
+      hideVocabExtra();
     }
 
     dailySpeakBtn.style.display = 'inline-flex';
@@ -179,7 +273,15 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
-    if (dlState.phase === 'learn-vocab') {
+    if (dlState.phase === 'learn-vocab-a') {
+      dlState.phase = 'learn-vocab-b';
+      dlState.currentItems = dlState.vocabItems.slice(5, 10);
+      dlState.currentIndex = 0;
+      renderLearnItem();
+      return;
+    }
+
+    if (dlState.phase === 'learn-vocab-b') {
       dlState.phase = 'learn-kanji';
       dlState.currentItems = dlState.kanjiItems.slice();
       dlState.currentIndex = 0;
@@ -210,7 +312,8 @@ document.addEventListener('DOMContentLoaded', function() {
     dailyPracticeOptions.innerHTML = '';
     dailyPracticeLabel.textContent = '⚡ Quick Practice';
     dailyPracticeProgress.textContent = (dlState.currentIndex + 1) + ' / ' + dlState.currentItems.length;
-    dailyPracticeType.textContent = item.type === 'vocab' ? 'Từ vựng' : 'Kanji';
+    dailyPracticeType.textContent = getCategoryLabel(item.category || item.type);
+    dailyPracticeType.className = 'daily-category-badge';
     dailyPracticePrompt.textContent = item.prompt;
     dailyPracticeSecondary.textContent = item.secondary;
     dailyPracticeSpeakBtn.style.display = 'inline-flex';
@@ -301,6 +404,8 @@ document.addEventListener('DOMContentLoaded', function() {
     dailySummaryScreen.style.display = 'flex';
     dailySummaryTitle.textContent = day.label + ' — Hoàn thành';
     dailySummaryContent.innerHTML =
+      '<p class="daily-summary-topic">' + day.topic + '</p>' +
+      '<p class="daily-summary-breakdown">Đã học 10 từ vựng · 3 kanji</p>' +
       '<p class="daily-summary-score">Đúng ' + correctCount + ' / ' + total + '</p>' +
       '<p class="daily-summary-status">Trạng thái ngày học: Hoàn thành</p>' +
       '<p class="daily-summary-note">Bạn có thể học lại ngày này bất cứ lúc nào từ danh sách ngày học.</p>';
@@ -310,12 +415,12 @@ document.addEventListener('DOMContentLoaded', function() {
     var item = dlState.currentItems[dlState.currentIndex];
     if (!item) return null;
 
-    if (dlState.phase === 'learn-vocab' || dlState.phase === 'learn-kanji') {
-      return item.reading || item.jp || item.kanji;
+    if (dlState.phase === 'learn-vocab-a' || dlState.phase === 'learn-vocab-b' || dlState.phase === 'learn-kanji') {
+      return item.audioText || item.reading || item.jp || item.kanji;
     }
 
     if (dlState.phase === 'practice') {
-      return item.answer;
+      return item.audioText || item.answer;
     }
 
     return null;

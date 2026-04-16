@@ -1245,6 +1245,11 @@ body {
   font-weight: bold;
   color: #365314;
 }
+.daily-day-topic {
+  font-size: 0.9rem;
+  color: #4d7c0f;
+  font-weight: 600;
+}
 .daily-day-meta {
   font-size: 0.85rem;
   color: #4b5563;
@@ -1302,6 +1307,12 @@ body {
   margin-bottom: 24px;
   width: 100%;
 }
+#daily-card-topic {
+  font-size: 0.95rem;
+  color: #4d7c0f;
+  font-weight: bold;
+  text-align: center;
+}
 #daily-card-main {
   font-size: 3rem;
   font-weight: bold;
@@ -1332,6 +1343,12 @@ body {
   color: #3f6212;
   font-weight: bold;
 }
+#daily-card-pronunciation {
+  font-size: 0.98rem;
+  color: #0f766e;
+  text-align: center;
+  font-weight: 600;
+}
 #daily-card-meaning {
   font-size: 1rem;
   color: #4b5563;
@@ -1344,6 +1361,55 @@ body {
   background: #f3f4f6;
   border-radius: 999px;
   padding: 4px 12px;
+}
+.daily-category-badge {
+  font-size: 0.85rem;
+  color: #365314;
+  background: #ecfccb;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-weight: bold;
+}
+#daily-card-note {
+  font-size: 0.92rem;
+  color: #4b5563;
+  text-align: center;
+  max-width: 420px;
+}
+#daily-card-example {
+  width: 100%;
+  max-width: 420px;
+  margin-top: 4px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+}
+.daily-card-example-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+#daily-card-example-jp {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+#daily-card-example-meaning {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #4b5563;
+}
+.daily-card-highlight {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 1px 4px;
+  border-radius: 6px;
+  font-weight: 700;
 }
 #daily-learn-actions,
 #daily-summary-actions {
@@ -1448,6 +1514,15 @@ body {
   font-size: 1.2rem;
   font-weight: bold;
   color: #3f6212;
+}
+.daily-summary-topic {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #4d7c0f;
+}
+.daily-summary-breakdown {
+  font-size: 0.95rem;
+  color: #4b5563;
 }
 .daily-summary-status {
   font-size: 1rem;

@@ -1,10 +1,10 @@
-# Task: [HIRA-017] Daily Lesson Tab (5 Vocab + 3 Kanji)
+# Task: [HIRA-017] Daily Lesson Tab (10 Vocab + 3 Kanji)
 
 ## Thông tin
 
 - **ID:** HIRA-017
 - **Ngày tạo:** 2026-04-12
-- **Trạng thái:** active
+- **Trạng thái:** complete
 - **Loại:** feature
 
 ## Mô tả
@@ -12,7 +12,7 @@
 Thêm một flow học mới độc lập với kana quiz hiện tại: **Học mỗi ngày**.
 
 Mỗi ngày là một unit học, không khóa cứng theo calendar thật, gồm:
-- **5 từ vựng**
+- **10 từ vựng**
 - **3 kanji**
 
 Dataset bám theo **Minna no Nihongo Bài 1 → Bài 25**.
@@ -35,13 +35,13 @@ V1 cần có:
 
 ## Tiêu chí hoàn thành
 
-- [ ] Nút/tab **Học mỗi ngày** xuất hiện trên `mode-selection-screen`
-- [ ] Có màn hình danh sách ngày học với status từng ngày
-- [ ] Mỗi ngày có đúng 5 vocab + 3 kanji
-- [ ] Flow V1 đi được: Overview → Learn vocab → Learn kanji → Quick practice → Summary
-- [ ] Trạng thái từng ngày được lưu bền vững sau reload
-- [ ] Có thể mở lại ngày cũ để ôn
-- [ ] Flow mới tách biệt khỏi Quiz / Flashcard / Weak Review / PT / Number Trainer
+- [x] Nút/tab **Học mỗi ngày** xuất hiện trên `mode-selection-screen`
+- [x] Có màn hình danh sách ngày học với status từng ngày
+- [x] Mỗi ngày có đúng 10 vocab + 3 kanji
+- [x] Flow V1 đi được: Overview → Learn vocab → Learn kanji → Quick practice → Summary
+- [x] Trạng thái từng ngày được lưu bền vững sau reload
+- [x] Có thể mở lại ngày cũ để ôn
+- [x] Flow mới tách biệt khỏi Quiz / Flashcard / Weak Review / PT / Number Trainer
 
 ## Không thuộc phạm vi
 

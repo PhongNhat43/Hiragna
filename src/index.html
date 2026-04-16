@@ -134,7 +134,7 @@
   <!-- Daily Lesson screens -->
   <div id="daily-overview-screen" class="quiz-container" style="display: none;">
     <h2>Học Mỗi Ngày</h2>
-    <p class="daily-subtitle">Mỗi ngày gồm 5 từ vựng và 3 kanji</p>
+    <p class="daily-subtitle">Mỗi ngày gồm 10 từ vựng và 3 kanji</p>
     <div id="daily-overview-list"></div>
     <button id="back-from-daily-overview-btn" class="back-btn">← Quay Lại</button>
   </div>
@@ -144,11 +144,20 @@
     <div id="daily-progress"></div>
     <h2 id="daily-day-title">Ngày học</h2>
     <div id="daily-card-section">
+      <div id="daily-card-topic"></div>
       <div id="daily-card-main"></div>
       <button id="daily-speak-btn" class="daily-speak-btn" type="button" title="Nghe phát âm">🔊</button>
       <div id="daily-card-reading"></div>
+      <div id="daily-card-pronunciation"></div>
       <div id="daily-card-meaning"></div>
       <div id="daily-card-type"></div>
+      <div id="daily-card-note"></div>
+      <div id="daily-card-example" style="display: none;">
+        <div class="daily-card-example-label">Ví dụ</div>
+        <div id="daily-card-example-jp"></div>
+        <div class="daily-card-example-label">Dịch nghĩa</div>
+        <div id="daily-card-example-meaning"></div>
+      </div>
     </div>
     <div id="daily-learn-actions">
       <button id="daily-next-btn">Tiếp →</button>
