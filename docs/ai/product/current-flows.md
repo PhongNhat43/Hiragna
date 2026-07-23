@@ -1,6 +1,6 @@
 # Current Flows
 
-_Cập nhật lần cuối: 2026-04-02 (sau HIRA-006)_
+_Cập nhật lần cuối: 2026-06-08 (sau HIRA-018)_
 
 ---
 
@@ -17,6 +17,16 @@ _Cập nhật lần cuối: 2026-04-02 (sau HIRA-006)_
   [group-filter] [flashcard-screen] → [main-quiz]
         ↓
   [settings] → [main-quiz]
+
+  Click "Học Theo Bài"
+        ↓
+  [daily-overview-screen]
+        ↓
+  [daily-learn-screen]
+        ↓
+  [daily-practice-screen]
+        ↓
+  [daily-summary-screen]
 ```
 
 ---

@@ -4,6 +4,12 @@ Mỗi entry tương ứng một task đã archive. Cập nhật bắt buộc tr�
 
 ---
 
+## [HIRA-018] Refactor Học Mỗi Ngày thành Học Theo Bài — 2026-06-08
+
+Refactor learning mode riêng từ mô hình `day` sang `lesson -> section`, đổi copy UI thành `Học Theo Bài`, và sync scope học với 7 bài đầu Minna no Nihongo. Data layer được thay bằng `src/lessonsData.js` với 7 lessons, mỗi lesson có 2 sections vocab-only. Flow học được rút gọn còn `learn-vocab -> quick practice -> summary`, badge trạng thái lưu theo `sectionId`, và thuật toán distractor mới ưu tiên section hiện tại rồi quét ngược các section trước trong cùng lesson để bù đáp án khi section ngắn. Không còn kanji phase, không còn chia vocab block cố định, và không còn fallback placeholder kiểu `Đáp án phụ`.
+
+Files: `src/index.html`, `src/style.css`, `src/progress.js`, `src/lessonsData.js`, `src/dailyLesson.js`, `docs/ai/product/current-features.md`, `docs/ai/product/current-flows.md`
+
 ## [HIRA-017] Daily Lesson Tab (10 Vocab + 3 Kanji) — 2026-04-16
 
 Thêm learning mode độc lập `Học mỗi ngày` trên home, gồm overview 25 ngày, learn flow theo block vocab/kanji, mixed quick practice, summary, và lưu trạng thái `not_started / in_progress / completed` qua `progress.js`. Daily Lesson dùng schema mở rộng với `topic`, `category`, `note`, `audioText`, `pronunciationVi`, `example`; đã map dữ liệu thật cho `day01-day04`, còn `day05+` giữ placeholder theo schema mới để fill tiếp sau. Vocab learn card được enrich với nút loa, dòng phát âm gần đúng, 1 câu ví dụ, 1 dòng dịch nghĩa, và highlight từ đang học.

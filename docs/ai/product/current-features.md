@@ -1,6 +1,6 @@
 # Current Features
 
-_Cập nhật lần cuối: 2026-04-07 (sau HIRA-013)_
+_Cập nhật lần cuối: 2026-06-08 (sau HIRA-018)_
 
 ---
 
@@ -10,6 +10,7 @@ _Cập nhật lần cuối: 2026-04-07 (sau HIRA-013)_
 |---|---|
 | Quiz Mode | Trắc nghiệm 4 lựa chọn, có scoring và review |
 | Flashcard Mode | Xem ký tự, tự đánh giá knew it / need review |
+| Học Theo Bài | Học từ vựng theo `lesson -> section`, learn flow + quick practice + lưu trạng thái section |
 
 ---
 

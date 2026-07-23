@@ -199,7 +199,7 @@ function updateItemStat(type, kana, isCorrect) {
   saveItemStats(stats);
 }
 
-// --- Daily Lessons ---
+// --- Lesson Study / Daily Lessons ---
 
 function getDefaultDailyLessonProgress() {
   return {};
@@ -223,13 +223,13 @@ function saveDailyLessonProgress(data) {
   }
 }
 
-function saveDailyLessonStatus(dayId, status) {
+function saveDailyLessonStatus(sectionId, status) {
   const progress = loadDailyLessonProgress();
-  progress[dayId] = progress[dayId] || {};
-  progress[dayId].status = status;
-  progress[dayId].updatedAt = Date.now();
+  progress[sectionId] = progress[sectionId] || {};
+  progress[sectionId].status = status;
+  progress[sectionId].updatedAt = Date.now();
   if (status === 'completed') {
-    progress[dayId].completedAt = Date.now();
+    progress[sectionId].completedAt = Date.now();
   }
   saveDailyLessonProgress(progress);
 }
