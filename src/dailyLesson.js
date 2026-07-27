@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
     dailyPracticeType.textContent = item.category || 'Từ vựng';
     dailyPracticeType.className = 'daily-category-badge';
     dailyPracticePrompt.textContent = item.prompt;
-    dailyPracticeSecondary.textContent = item.secondary;
+    dailyPracticeSecondary.textContent = '';
     dailyPracticeSpeakBtn.style.display = 'inline-flex';
 
     buildPracticeOptions(item).forEach((option) => {
@@ -372,6 +372,11 @@ document.addEventListener('DOMContentLoaded', () => {
   dailyPracticeSpeakBtn.addEventListener('click', () => {
     const text = getCurrentSpeakText();
     if (text) speakJapanese(text);
+
+    const item = dlState.currentItems[dlState.currentIndex];
+    if (item && item.secondary) {
+      dailyPracticeSecondary.textContent = item.secondary;
+    }
   });
 
   dailyExitLearnBtn.addEventListener('click', () => {
