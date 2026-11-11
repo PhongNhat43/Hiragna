@@ -8,16 +8,25 @@
 </head>
 <body>
   <div id="mode-selection-screen" class="quiz-container" style="display: flex;">
-    <h2>Chọn Chế Độ</h2>
+    <h2>Hiragna — Học tiếng Nhật</h2>
+    <div id="main-menu">
+      <button class="main-menu-btn" data-menu="vocab">1. Học từ vựng</button>
+      <button class="main-menu-btn" data-menu="grammar">2. Học ngữ pháp</button>
+      <button class="main-menu-btn" data-menu="review">3. Ôn tập</button>
+      <button class="main-menu-btn" data-menu="practice">4. Luyện tập</button>
+      <button class="main-menu-btn" data-menu="progress">5. Theo dõi tiến độ</button>
+      <button class="main-menu-btn" data-menu="search">6. Tìm kiếm / tra cứu</button>
+    </div>
+    <p class="legacy-label">Chức năng hiện có (phase trước)</p>
     <div id="mode-buttons">
       <button class="mode-btn" data-mode="quiz">Chế Độ Quiz</button>
       <button class="mode-btn" data-mode="flashcard">Chế Độ Flashcard</button>
       <button id="weak-review-btn">Ôn Điểm Yếu</button>
+      <button id="view-progress-btn">Xem Tiến Trình</button>
+      <button id="pt-btn">Luyện Phát Âm</button>
+      <button id="nt-btn">Luyện Số</button>
+      <button id="daily-btn">Học Theo Bài</button>
     </div>
-    <button id="view-progress-btn">Xem Tiến Trình</button>
-    <button id="pt-btn">Luyện Phát Âm</button>
-    <button id="nt-btn">Luyện Số</button>
-    <button id="daily-btn">Học Theo Bài</button>
   </div>
   <div id="progress-screen" class="quiz-container" style="display: none;">
     <h2>Tiến Trình Học</h2>
@@ -187,6 +196,202 @@
   </div>
   <!-- End Lesson Study screens -->
 
+  <!-- Vocab Learning screens -->
+  <div id="vocab-home-screen" class="quiz-container" style="display: none;">
+    <h2>Học từ vựng</h2>
+    <p class="vocab-subtitle">Bảng chữ · Từ vựng Minna no Nihongo · N5</p>
+    <p class="vocab-due-info" id="vocab-home-due-info"></p>
+    <div id="vocab-home-buttons">
+      <button class="vocab-tier-btn" data-tier="hiragana">Bảng chữ Hiragana<span class="vocab-tier-sub">あいうえお… · mỗi bài 5 ký tự</span></button>
+      <button class="vocab-tier-btn" data-tier="katakana">Bảng chữ Katakana<span class="vocab-tier-sub">アイウエオ… · mỗi bài 5 ký tự</span></button>
+      <button class="vocab-tier-btn" data-tier="minna">Từ vựng Minna no Nihongo<span class="vocab-tier-sub">7 bài đầu · nhóm 5-7 từ</span></button>
+    </div>
+    <p class="vocab-note">Kanji không học riêng — gộp trong từ vựng. Bấm vào một từ có Kanji để xem chi tiết.</p>
+    <div class="button-row">
+      <button id="vocab-review-today-btn">Ôn hôm nay</button>
+      <button id="vocab-settings-btn">Cài đặt</button>
+    </div>
+    <button id="back-from-vocab-home-btn" class="back-btn">← Quay Lại</button>
+  </div>
+
+  <div id="vocab-lesson-list-screen" class="quiz-container" style="display: none;">
+    <h2 id="vocab-lesson-list-title">Chọn Bài</h2>
+    <div id="vocab-lesson-buttons"></div>
+    <button id="back-from-vocab-lesson-list-btn" class="back-btn">← Quay Lại</button>
+  </div>
+
+  <div id="vocab-list-screen" class="quiz-container" style="display: none;">
+    <div class="vocab-list-title-row">
+      <h2 id="vocab-list-title"></h2>
+      <button id="vocab-list-orientation-btn" title="Đổi danh sách dọc / ngang">⇅ Dọc/Ngang</button>
+    </div>
+    <div id="vocab-list-units"></div>
+    <button id="back-from-vocab-list-btn" class="back-btn">← Quay Lại</button>
+  </div>
+
+  <div id="vocab-detail-screen" class="quiz-container" style="display: none;">
+    <div id="vd-jp"></div>
+    <div id="vd-reading"></div>
+    <div id="vd-meaning"></div>
+    <div id="vd-audio-buttons">
+      <button id="vd-speak-btn">🔊 Nghe</button>
+      <button id="vd-speak-slow-btn">🐢 Nghe chậm</button>
+    </div>
+    <div id="vd-example" style="display:none;">
+      <div class="vd-label">Ví dụ</div>
+      <div id="vd-example-jp"></div>
+      <div id="vd-example-vi"></div>
+    </div>
+    <div id="vd-usage" style="display:none;">
+      <div class="vd-label">Cách dùng</div>
+      <div id="vd-usage-text"></div>
+    </div>
+    <div id="vd-kanji" style="display:none;">
+      <div class="vd-label">Kanji trong từ</div>
+      <div id="vd-kanji-cards"></div>
+    </div>
+    <div id="vd-actions">
+      <button id="vd-repeat-btn">Nghe lại</button>
+      <button id="vd-practice-btn">Luyện ngay từ này</button>
+      <button id="vd-hard-btn">Đánh dấu là từ khó</button>
+    </div>
+    <div id="vd-quiz" style="display:none;">
+      <div id="vd-quiz-question"></div>
+      <div id="vd-quiz-options"></div>
+      <div id="vd-quiz-explain" style="display:none;"></div>
+    </div>
+    <button id="back-from-vocab-detail-btn" class="back-btn">← Quay Lại</button>
+  </div>
+
+  <div id="vocab-learn-screen" class="quiz-container" style="display: none;">
+    <div id="vl-phase-label"></div>
+    <div id="vl-progress"></div>
+    <div id="vl-front">
+      <div id="vl-front-jp"></div>
+      <button id="vl-front-speak-btn" type="button" title="Nghe phát âm">🔊</button>
+      <div id="vl-front-reading" style="display:none;"></div>
+      <div id="vl-front-example" style="display:none;"></div>
+      <button id="vl-flip-btn">Lật thẻ</button>
+    </div>
+    <div id="vl-back" style="display:none;">
+      <div id="vl-back-jp"></div>
+      <div id="vl-back-reading"></div>
+      <div id="vl-back-meaning"></div>
+      <div id="vl-back-example"></div>
+      <div id="vl-back-usage"></div>
+    </div>
+    <div id="vl-actions">
+      <button id="vl-knew-btn" style="display:none;">Đã nhớ ✓</button>
+      <button id="vl-unsure-btn" style="display:none;">Chưa nhớ ?</button>
+    </div>
+    <button id="vl-exit-btn" class="back-btn">← Thoát</button>
+  </div>
+
+  <div id="vocab-practice-screen" class="quiz-container" style="display: none;">
+    <div id="vp-phase-label"></div>
+    <div id="vp-progress"></div>
+    <div id="vp-timer" style="display:none;"></div>
+    <div id="vp-question-area">
+      <div id="vp-type-label"></div>
+      <div id="vp-prompt"></div>
+      <button id="vp-speak-btn" style="display:none;">🔊 Nghe</button>
+      <div id="vp-secondary" style="display:none;"></div>
+    </div>
+    <div id="vp-options"></div>
+    <div id="vp-explain" style="display:none;"></div>
+    <div id="vp-actions">
+      <button id="vp-next-btn" style="display:none;">Câu tiếp theo →</button>
+    </div>
+    <div id="vp-summary" style="display:none;">
+      <div id="vp-summary-content"></div>
+      <button id="vp-summary-next-btn">Về danh sách từ</button>
+    </div>
+    <button id="vp-exit-btn" class="back-btn">← Thoát</button>
+  </div>
+
+  <div id="vocab-review-screen" class="quiz-container" style="display: none;">
+    <h2>Ôn hôm nay</h2>
+    <p id="vr-count"></p>
+    <div id="vr-list"></div>
+    <button id="back-from-vocab-review-btn" class="back-btn">← Quay Lại</button>
+  </div>
+
+  <div id="vocab-settings-screen" class="quiz-container" style="display: none;">
+    <h2>Cài đặt học từ vựng</h2>
+    <div class="setting-group">
+      <p>Danh sách từ vựng</p>
+      <div class="setting-options">
+        <button class="vs-btn active" data-vs="listOrientation" data-value="vertical">Dọc</button>
+        <button class="vs-btn" data-vs="listOrientation" data-value="horizontal">Ngang</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <p>Màn Học — tự động phát âm khi mở thẻ</p>
+      <div class="setting-options">
+        <button class="vs-btn active" data-vs="learnAutoSpeak" data-value="true">Bật</button>
+        <button class="vs-btn" data-vs="learnAutoSpeak" data-value="false">Tắt</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <p>Màn Học — hiện cách đọc ở mặt trước</p>
+      <div class="setting-options">
+        <button class="vs-btn" data-vs="learnShowReadingFront" data-value="true">Bật</button>
+        <button class="vs-btn active" data-vs="learnShowReadingFront" data-value="false">Tắt</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <p>Màn Học — hiện câu ví dụ ở mặt trước</p>
+      <div class="setting-options">
+        <button class="vs-btn" data-vs="learnShowExampleFront" data-value="true">Bật</button>
+        <button class="vs-btn active" data-vs="learnShowExampleFront" data-value="false">Tắt</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <p>Màn Luyện — timer 10 giây mỗi câu</p>
+      <div class="setting-options">
+        <button class="vs-btn" data-vs="practiceTimer" data-value="true">Bật</button>
+        <button class="vs-btn active" data-vs="practiceTimer" data-value="false">Tắt</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <p>Màn Luyện — tự chuyển câu sau khi chọn</p>
+      <div class="setting-options">
+        <button class="vs-btn active" data-vs="practiceAutoNext" data-value="true">Bật</button>
+        <button class="vs-btn" data-vs="practiceAutoNext" data-value="false">Tắt</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <p>Màn Luyện — ôn lại lỗi sai ngay sau quiz</p>
+      <div class="setting-options">
+        <button class="vs-btn active" data-vs="practiceReviewWrongNow" data-value="true">Bật</button>
+        <button class="vs-btn" data-vs="practiceReviewWrongNow" data-value="false">Tắt</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <p>Màn Ôn — số từ tối đa mỗi buổi</p>
+      <div class="setting-options">
+        <button class="vs-btn" data-vs="reviewMaxPerSession" data-value="5">5</button>
+        <button class="vs-btn active" data-vs="reviewMaxPerSession" data-value="10">10</button>
+        <button class="vs-btn" data-vs="reviewMaxPerSession" data-value="15">15</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <p>Màn Ôn — ôn cả từ đã thuộc lâu</p>
+      <div class="setting-options">
+        <button class="vs-btn" data-vs="reviewIncludeMastered" data-value="true">Bật</button>
+        <button class="vs-btn active" data-vs="reviewIncludeMastered" data-value="false">Tắt</button>
+      </div>
+    </div>
+    <button id="back-from-vocab-settings-btn" class="back-btn">← Quay Lại</button>
+  </div>
+
+  <div id="placeholder-screen" class="quiz-container" style="display: none;">
+    <h2 id="placeholder-title"></h2>
+    <p class="placeholder-note">Chức năng này sẽ làm ở phase sau.</p>
+    <button id="back-from-placeholder-btn" class="back-btn">← Quay Lại</button>
+  </div>
+  <!-- End Vocab Learning screens -->
+
   <div id="difficulty-screen" class="quiz-container" style="display: none;">
     <h2>Chọn Độ Khó</h2>
     <div id="difficulty-buttons">
@@ -306,8 +511,10 @@
   <script src="progress.js"></script>
   <script src="numberData.js"></script>
   <script src="lessonsData.js"></script>
+  <script src="vocabData.js"></script>
   <script src="quiz.js"></script>
   <script src="numberTrainer.js"></script>
   <script src="dailyLesson.js"></script>
+  <script src="vocabStudy.js"></script>
 </body>
 </html>

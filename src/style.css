@@ -1553,3 +1553,657 @@ body {
   font-size: 0.92rem;
   color: #6b7280;
 }
+
+/* ============================== */
+/* Vocab Learning (HIRA-019)      */
+/* ============================== */
+
+/* Màn hình chính — 6 mục chính */
+#main-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 360px;
+  margin: 12px 0;
+}
+.main-menu-btn {
+  padding: 14px 20px;
+  font-size: 1.05rem;
+  border: 2px solid #4f46e5;
+  border-radius: 10px;
+  background: #eef2ff;
+  color: #312e81;
+  cursor: pointer;
+  text-align: left;
+  font-weight: bold;
+  transition: background 0.2s, color 0.2s;
+}
+.main-menu-btn:hover {
+  background: #4f46e5;
+  color: #fff;
+}
+.legacy-label {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 14px 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Placeholder screens */
+.placeholder-note {
+  color: #6b7280;
+  font-size: 1rem;
+  margin: 10px 0 20px;
+}
+
+/* Vocab home */
+.vocab-subtitle {
+  color: #6b7280;
+  margin: 4px 0;
+}
+.vocab-due-info {
+  color: #92400e;
+  background: #fef3c7;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 0.95rem;
+}
+.vocab-due-info:empty {
+  display: none;
+}
+#vocab-home-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 400px;
+  margin: 12px 0;
+}
+.vocab-tier-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 18px;
+  border: 2px solid #0891b2;
+  border-radius: 10px;
+  background: #ecfeff;
+  color: #155e75;
+  font-size: 1.05rem;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s, color 0.2s;
+}
+.vocab-tier-btn:hover {
+  background: #0891b2;
+  color: #fff;
+}
+.vocab-tier-sub {
+  font-size: 0.85rem;
+  font-weight: normal;
+  opacity: 0.8;
+}
+.vocab-note {
+  font-size: 0.88rem;
+  color: #6b7280;
+  margin: 4px 0 12px;
+}
+
+/* Danh sách bài học */
+#vocab-lesson-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 420px;
+  margin: 10px 0;
+  max-height: 55vh;
+  overflow-y: auto;
+}
+.vocab-lesson-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s, border-color 0.2s;
+}
+.vocab-lesson-btn:hover {
+  background: #e0e7ff;
+  border-color: #4f46e5;
+}
+.vocab-lesson-name {
+  font-weight: bold;
+  color: #1f2937;
+}
+.vocab-lesson-range {
+  color: #4f46e5;
+  font-size: 1.05rem;
+}
+.vocab-lesson-meta {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+/* Danh sách từ — dọc / ngang */
+.vocab-list-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+#vocab-list-orientation-btn {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  cursor: pointer;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+#vocab-list-units {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 480px;
+  margin: 10px 0;
+}
+.vocab-unit-block {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  background: #fafafa;
+}
+.vocab-unit-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.vocab-unit-title {
+  font-weight: bold;
+  color: #312e81;
+  margin-right: 8px;
+}
+.vocab-unit-meta {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+.vocab-unit-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.vocab-unit-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.vocab-unit-btn.learn {
+  background: #e0e7ff;
+  color: #312e81;
+}
+.vocab-unit-btn.practice {
+  background: #fef3c7;
+  color: #92400e;
+}
+.vocab-unit-btn.review {
+  background: #d1fae5;
+  color: #065f46;
+}
+.vocab-unit-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Dọc: mỗi dòng một từ */
+.vocab-unit-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.vocab-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background 0.15s;
+}
+.vocab-row:hover {
+  background: #eef2ff;
+}
+.vocab-row-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.vocab-row-jp {
+  font-size: 1.3rem;
+  color: #111827;
+}
+.vocab-row-reading {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+.vocab-row-meaning {
+  color: #374151;
+  font-size: 0.95rem;
+  text-align: right;
+}
+
+/* Ngang: mỗi bài một hàng ngang, lướt qua xem từ */
+#vocab-list-units.horizontal .vocab-unit-items {
+  flex-direction: row;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+#vocab-list-units.horizontal .vocab-row {
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 150px;
+  max-width: 150px;
+  flex-shrink: 0;
+}
+#vocab-list-units.horizontal .vocab-row-main {
+  align-items: flex-start;
+}
+#vocab-list-units.horizontal .vocab-row-meaning {
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+/* Chấm báo mức thuộc */
+.vocab-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #d1d5db;
+}
+.vocab-dot.dot-new {
+  background: #9ca3af;
+}
+.vocab-dot.dot-learning {
+  background: #f59e0b;
+}
+.vocab-dot.dot-mastered {
+  background: #16a34a;
+}
+.vocab-dot.dot-hard {
+  background: #dc2626;
+}
+
+/* Trang chi tiết từ */
+#vd-jp {
+  font-size: 2.6rem;
+  font-weight: bold;
+  color: #111827;
+}
+#vd-reading {
+  font-size: 1.1rem;
+  color: #4f46e5;
+  margin-top: 2px;
+}
+#vd-meaning {
+  font-size: 1.05rem;
+  color: #374151;
+  margin: 4px 0 10px;
+}
+#vd-audio-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+#vd-speak-btn,
+#vd-speak-slow-btn {
+  padding: 8px 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  cursor: pointer;
+}
+.vd-label {
+  font-weight: bold;
+  color: #312e81;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+#vd-example,
+#vd-usage,
+#vd-kanji {
+  width: 100%;
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+}
+#vd-example-jp {
+  font-size: 1.1rem;
+  color: #111827;
+}
+#vd-example-vi {
+  color: #6b7280;
+  font-size: 0.92rem;
+  margin-top: 2px;
+}
+#vd-usage-text {
+  color: #374151;
+  font-size: 0.95rem;
+}
+#vd-kanji-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.vd-kanji-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.vd-kanji-char {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #4f46e5;
+}
+.vd-kanji-info {
+  font-size: 0.9rem;
+  color: #374151;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+#vd-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 12px 0;
+}
+#vd-actions button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+#vd-repeat-btn {
+  background: #e0e7ff;
+  color: #312e81;
+}
+#vd-practice-btn {
+  background: #fef3c7;
+  color: #92400e;
+}
+#vd-hard-btn {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+#vd-quiz {
+  width: 100%;
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+#vd-quiz-question {
+  font-size: 1.2rem;
+  color: #111827;
+  margin-bottom: 10px;
+}
+#vd-quiz-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+#vd-quiz-explain {
+  margin-top: 8px;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+/* Màn Học — thẻ lật */
+#vl-front,
+#vl-back {
+  width: 100%;
+  max-width: 400px;
+  min-height: 220px;
+  border: 2px solid #4f46e5;
+  border-radius: 12px;
+  background: #eef2ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  margin: 10px 0;
+}
+#vl-front-jp,
+#vl-back-jp {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #111827;
+}
+#vl-front-speak-btn {
+  padding: 10px 14px;
+  font-size: 1.2rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+#vl-front-reading {
+  color: #4f46e5;
+  font-size: 1.05rem;
+}
+#vl-front-example {
+  color: #374151;
+  font-size: 0.95rem;
+  text-align: center;
+}
+#vl-flip-btn {
+  padding: 10px 26px;
+  border: none;
+  border-radius: 8px;
+  background: #4f46e5;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 8px;
+}
+#vl-back-reading {
+  color: #4f46e5;
+  font-size: 1.1rem;
+}
+#vl-back-meaning {
+  color: #111827;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+#vl-back-example {
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  text-align: center;
+}
+.vl-example-jp {
+  font-size: 1rem;
+  color: #111827;
+}
+.vl-example-vi {
+  color: #6b7280;
+  font-size: 0.88rem;
+}
+#vl-back-usage {
+  color: #374151;
+  font-size: 0.9rem;
+  text-align: center;
+}
+#vl-actions {
+  display: flex;
+  gap: 12px;
+  margin: 8px 0;
+}
+#vl-knew-btn,
+#vl-unsure-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+#vl-knew-btn {
+  background: #bbf7d0;
+  color: #166534;
+}
+#vl-unsure-btn {
+  background: #fecaca;
+  color: #b91c1c;
+}
+
+/* Màn Luyện */
+#vp-type-label {
+  color: #4f46e5;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+#vp-prompt {
+  font-size: 2rem;
+  color: #111827;
+  margin: 8px 0;
+}
+#vp-secondary {
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+#vp-speak-btn {
+  padding: 10px 18px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  cursor: pointer;
+  font-size: 1rem;
+}
+#vp-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  max-width: 440px;
+  margin: 10px 0;
+}
+.vocab-practice-option {
+  padding: 14px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 1.05rem;
+}
+.vocab-practice-option:disabled {
+  cursor: default;
+}
+.vocab-practice-option.correct {
+  background: #bbf7d0;
+  border-color: #16a34a;
+  color: #166534;
+}
+.vocab-practice-option.wrong {
+  background: #fecaca;
+  border-color: #dc2626;
+  color: #b91c1c;
+}
+#vp-explain {
+  width: 100%;
+  max-width: 440px;
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #374151;
+  font-size: 0.92rem;
+}
+#vp-timer {
+  color: #b91c1c;
+  font-weight: bold;
+}
+#vp-timer.timer-warning {
+  animation: vocab-timer-pulse 1s infinite;
+}
+@keyframes vocab-timer-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+#vp-summary {
+  width: 100%;
+  text-align: center;
+}
+#vp-summary-content {
+  margin-bottom: 16px;
+}
+.vp-summary-score {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #312e81;
+}
+.vp-summary-note {
+  color: #6b7280;
+  font-size: 0.92rem;
+}
+
+/* Màn Ôn */
+#vr-count {
+  color: #92400e;
+  background: #fef3c7;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 0.95rem;
+}
+#vr-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-width: 420px;
+  margin: 10px 0;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+/* Mobile: 1 cột cho options + menu */
+@media (max-width: 480px) {
+  #vp-options,
+  #vd-quiz-options {
+    grid-template-columns: 1fr;
+  }
+  .vocab-row-jp {
+    font-size: 1.15rem;
+  }
+  #vd-jp {
+    font-size: 2.2rem;
+  }
+  .vocab-list-title-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

@@ -4,6 +4,16 @@ Mỗi entry tương ứng một task đã archive. Cập nhật bắt buộc tr�
 
 ---
 
+## [HIRA-019] Phase 4 — Dựng khung chính + Học từ vựng — 2026-11-10
+
+Dựng bộ khung chính theo nghiệp vụ đã chốt: màn hình chính 6 mục (Học từ vựng, Học ngữ pháp, Ôn tập, Luyện tập, Theo dõi tiến độ, Tìm kiếm / tra cứu); chỉ "Học từ vựng" làm đầy đủ, 5 mục còn lại là placeholder.
+
+Học từ vựng hoàn chỉnh: bảng chữ Hira/Kata (5 ký tự/bài), từ vựng Minna 7 bài × 4 nhóm (165 từ, chính tả Kanji N5), chi tiết Kanji (số nét, bộ thủ, từ liên quan), vòng Học (thẻ lật) → Luyện (5→7 câu, 4 dạng xoay vòng, chấm ngay) → Ôn (spaced repetition cap 10/buổi, từ khó ưu tiên). Cài đặt riêng 9 nhóm, lưu key mới `hiragna_vocab_settings`; lịch ôn per item lưu key mới `hiragna_vocab_srs` (1→3→7→14→30 ngày, sai +10 phút) do `hiragna_item_stats` thiếu dueAt/interval. Tái dùng `speakJapanese`, `updateItemStat`, `pickWeighted` không đổi.
+
+Files: `vocabData.js` (mới), `vocabStudy.js` (mới), `index.html`, `style.css`
+
+---
+
 ## [HIRA-018] Refactor Học Mỗi Ngày thành Học Theo Bài — 2026-06-08
 
 Refactor learning mode riêng từ mô hình `day` sang `lesson -> section`, đổi copy UI thành `Học Theo Bài`, và sync scope học với 7 bài đầu Minna no Nihongo. Data layer được thay bằng `src/lessonsData.js` với 7 lessons, mỗi lesson có 2 sections vocab-only. Flow học được rút gọn còn `learn-vocab -> quick practice -> summary`, badge trạng thái lưu theo `sectionId`, và thuật toán distractor mới ưu tiên section hiện tại rồi quét ngược các section trước trong cùng lesson để bù đáp án khi section ngắn. Không còn kanji phase, không còn chia vocab block cố định, và không còn fallback placeholder kiểu `Đáp án phụ`.
